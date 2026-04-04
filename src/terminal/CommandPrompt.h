@@ -3,44 +3,41 @@
 
 #include "Terminal.h"
 #include "PuzzleFile.h"
+#include "CommandParser.h"
 #include <string>
 #include <vector>
 
+// -------------------------------------------------------
+// CommandPrompt — the CLI terminal window where users can run commands
+// -------------------------------------------------------
 class CommandPrompt : public Terminal {
 private:
-    std::string prompt;
-    std::string hint;
-    std::vector<std::string> availableCommands;
     std::vector<PuzzleFile>* files;
+    CommandParser&           parser;
 
     std::vector<std::string> log;
-    std::string input;
-    bool finished;
+    std::string              input;
+    bool                     finished;
+    std::string              requestedOpenFile;
 
-    std::string requestedOpenFile;
-
+    //helper
     std::vector<std::string> tokenize(const std::string& text) const;
-    bool isValidCommand(const std::string& command) const;
+    bool        isValidCommand(const std::string& command) const;
     PuzzleFile* findFile(const std::string& filename);
-    bool checkFileCorrectness(const PuzzleFile& file) const;
-    void showHelp();
-    void processInput(const std::string& text);
+    void        processInput(const std::string& text);
 
 public:
-    CommandPrompt(const std::string& prompt,
-                  const std::string& hint,
-                  const std::vector<std::string>& availableCommands,
-                  std::vector<PuzzleFile>* files);
+    //use CommandParser, should have already constructed that with GameState
+    CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>*  files);
 
-    void update() override;
-    void draw() override;
+    void update()          override;
+    void draw()            override;
     bool isFinished() const override;
 
-    bool wantsToOpenFile() const;
+    bool        wantsToOpenFile()      const;
     std::string getRequestedOpenFile() const;
-    void clearOpenRequest();
-
-    void addLine(const std::string& line);
+    void        clearOpenRequest();
+    void        addLine(const std::string& line);
 };
 
 #endif
