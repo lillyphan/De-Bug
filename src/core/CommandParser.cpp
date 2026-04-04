@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
+#include <vector>
+#include <string>
 
 // -------------------------------------------------------
 // Public entry point
@@ -35,10 +37,12 @@ CommandResult CommandParser::handleHelp()
     CommandResult result;
 
     result.lines.push_back("--- help ---");
-    result.lines.push_back("  run            run your code and selected commands");
-    result.lines.push_back("  hint           show a hint for the current puzzle");
-    result.lines.push_back("  clear          clear the terminal");
-
+    //print all available
+    std::vector<std::string> commands = room->puzzle.availableCommands;
+    for (int i = 0; i < commands.size(); i++){
+        std::string description = commands[i] + " - " + m_state.commandDescriptions[commands[i]];
+        result.lines.push_back(description);
+    }
     return result;
 }
 
@@ -125,7 +129,7 @@ CommandResult CommandParser::handleRun(const std::string &playerCode, const std:
     }
 
     //pass to the puzzleEngine to validate the result
-    PuzzleEngine engine(m_state);     //puzzle engine according to the room (state)
+    PuzzleEngine engine(m_state); //puzzle engine according to the room (state)
     bool correct = engine.validate(ps, ps.type);
 
     if (correct) {
