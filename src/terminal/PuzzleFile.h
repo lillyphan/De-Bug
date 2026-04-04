@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "GameState.h"
-#include "PuzzleEngine.h"
+#include "core/headers/GameState.h"
+#include "core/headers/PuzzleEngine.h"
 #include <sstream>
 
 // -------------------------------------------------------

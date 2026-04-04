@@ -13,12 +13,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-add_executable(TerminalTest
-    src/testing.cpp
+add_executable(main
+    src/core/main.cpp
+    src/core/CommandParser.cpp
+    src/core/PuzzleEngine.cpp
     src/terminal/CommandPrompt.cpp
     src/terminal/Typing.cpp
     src/terminal/Dropdwn.cpp
 )
 
-target_include_directories(TerminalTest PRIVATE src src/terminal raygui)
-target_link_libraries(TerminalTest PRIVATE raylib)
+target_include_directories(main PRIVATE src src/terminal raygui)
+target_link_libraries(main PRIVATE raylib)

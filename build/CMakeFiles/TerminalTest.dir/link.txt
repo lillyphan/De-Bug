@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\TerminalTest.dir/objects.a
-C:\mingw64\mingw64\bin\ar.exe qc CMakeFiles\TerminalTest.dir/objects.a @CMakeFiles\TerminalTest.dir\objects1.rsp
-C:\mingw64\mingw64\bin\g++.exe -Wl,--whole-archive CMakeFiles\TerminalTest.dir/objects.a -Wl,--no-whole-archive -o TerminalTest.exe -Wl,--out-implib,libTerminalTest.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\TerminalTest.dir\linkLibs.rsp

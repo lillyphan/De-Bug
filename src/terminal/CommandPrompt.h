@@ -3,7 +3,7 @@
 
 #include "Terminal.h"
 #include "PuzzleFile.h"
-#include "CommandParser.h"
+#include "core/headers/CommandParser.h"
 #include <string>
 #include <vector>
 

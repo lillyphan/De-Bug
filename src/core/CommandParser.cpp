@@ -1,5 +1,5 @@
-#include "CommandParser.h"
-#include "PuzzleEngine.h"
+#include "headers/CommandParser.h"
+#include "headers/PuzzleEngine.h"
 #include <algorithm>
 #include <cctype>
 #include <sstream>

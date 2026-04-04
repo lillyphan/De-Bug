@@ -6,6 +6,7 @@ To build: cmake --build build
 To run: .\build\TerminalGame.exe
 
 MacOS
+To remove carlos shenans: rm -rf build
 To configure:  cmake -S . -B build
 To build:   cmake --build build
-To run:    ./build/TerminalGame
+To run:    ./build/main
