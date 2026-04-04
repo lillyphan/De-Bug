@@ -55,6 +55,8 @@ struct PuzzleState {
     std::vector<std::string> availableCommands;
     std::vector<std::string> filenames;
 
+    //in here, add two terminals as instances, initialize them using prexisting info in the puzzle state
+
     // convenience — did the player pick something in every dropdown?
     bool allDropdownsSelected() const {
         for (auto& d : dropdowns)

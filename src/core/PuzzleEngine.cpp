@@ -9,7 +9,7 @@
 bool PuzzleEngine::validate(const PuzzleState& ps, PuzzleType type)
 {
     switch (type) {
-        case PuzzleType::Code:     return validateCode(ps);
+        case PuzzleType::Typing:     return validateCode(ps);
         case PuzzleType::Dropdown: return validateDropdown(ps);
     }
     return false;
