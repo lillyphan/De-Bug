@@ -49,7 +49,9 @@ struct PuzzleState {
     std::string  playerCode; //edited code
     std::string  startingCode; //starting
     std::string  correctCode; //the "key"
+
     std::string hint;
+    std::vector<std::string> availableCommands;
 
     // convenience — did the player pick something in every dropdown?
     bool allDropdownsSelected() const {
@@ -100,6 +102,7 @@ struct PlayerState {
 struct GameState {
     PlayerState                              player;
     std::unordered_map<std::string, Room>    rooms;
+    std::unordered_map<std::string, std::string>    commandDescriptions;
     std::string                              activeRoomId;
     int                                      currentLevel = 0;
 
