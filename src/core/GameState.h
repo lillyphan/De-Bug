@@ -44,6 +44,7 @@ struct PuzzleState {
     std::vector<Dropdown> dropdowns;    // one per dropdown widget, in order
     std::string playerCode;  // the edited code snippet
     std::string startingCode;
+    std::string hint;
 
     // convenience — did the player pick something in every dropdown?
     bool allDropdownsSelected() const {

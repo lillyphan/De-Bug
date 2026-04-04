@@ -7,7 +7,7 @@
 // -------------------------------------------------------
 // Public entry point
 // -------------------------------------------------------
-CommandResult CommandParser::submit(const std::string&rawInput, const std::vector<std::string>& dropdownSelections)
+CommandResult CommandParser::submit(const std::string &rawInput, const std::vector<std::string> &dropdownSelections, const std::string &editorCode)
 {
     std::string input = trim(rawInput);
     if (input.empty()) return {};
@@ -21,7 +21,7 @@ CommandResult CommandParser::submit(const std::string&rawInput, const std::vecto
 
     //puzzle submission
     if (cmd == "run")
-        return handleRun(input, dropdownSelections);
+    return handleRun(editorCode, dropdownSelections);
 
     return unknownCommand(input);
 }
@@ -79,7 +79,7 @@ CommandResult CommandParser::handleHint()
 // -------------------------------------------------------
 // Puzzle submission
 // -------------------------------------------------------
-CommandResult CommandParser::handleRun(const std::string& code, const std::vector<std::string>& dropdownSelections)
+CommandResult CommandParser::handleRun(const std::string &playerCode, const std::vector<std::string> &dropdownSelections)
 {
     CommandResult result;
     Room* room = m_state.currentRoom();
@@ -109,8 +109,8 @@ CommandResult CommandParser::handleRun(const std::string& code, const std::vecto
     }
 
     //passed all checks, write player input into PuzzleState
-    ps.playerCode = ps.startingCode;  //startingCode is what they edited from
-    //loops thorugh all the dropdown slections
+    ps.playerCode = playerCode;
+    //loops thorugh all the dropdown slections  
     for (int i = 0; i < (int)dropdownSelections.size() &&
                     i < (int)ps.dropdowns.size(); i++) {
         //find and set the matching index for each selection
@@ -133,8 +133,40 @@ CommandResult CommandParser::handleRun(const std::string& code, const std::vecto
         // result.lines.push_back("Correct. The door is now unlocked.");
         result.solved = true;
     } else {
-        m_state.recordAttempt(code);
+        m_state.recordAttempt(playerCode);
     }
 
     return result;
 }
+
+// -------------------------------------------------------
+// Helpers
+// -------------------------------------------------------
+
+//if the player gives an unknown command 
+CommandResult CommandParser::unknownCommand(const std::string& input)
+{
+    CommandResult result;
+    result.lines.push_back("Unknown command: " + input);
+    result.lines.push_back("Type 'help' to see available commands.");
+    return result;
+}
+
+//get rid of whitespace
+std::string CommandParser::trim(const std::string& s)
+{
+    size_t start = s.find_first_not_of(" \t\r\n");
+    size_t end   = s.find_last_not_of(" \t\r\n");
+    return (start == std::string::npos) ? "" : s.substr(start, end - start + 1);
+}
+
+//lowercase helper
+std::string CommandParser::toLower(const std::string& s)
+{
+    std::string out = s;
+    std::transform(out.begin(), out.end(), out.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+    return out;
+}
+
+

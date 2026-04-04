@@ -9,7 +9,6 @@
 struct CommandResult {
     std::vector<std::string> lines;   // pushed into terminal log
     bool                     solved = false;
-    bool                     failed = false;  // ran out of attempts
     bool                     clear  = false;  // player typed "clear"
 };
 
@@ -23,7 +22,8 @@ public:
     // Call this whenever the player hits Enter in the terminal.
     // Pass the raw input string and the current dropdown selections.
     CommandResult submit(const std::string&              rawInput,
-                         const std::vector<std::string>& dropdownSelections = {});
+                         const std::vector<std::string>& dropdownSelections = {}, 
+                        const std::string &editorCode);
 
 private:
     GameState& m_state;
