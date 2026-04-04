@@ -13,12 +13,12 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-add_executable(DeBug
+add_executable(TerminalTest
     src/testing.cpp
     src/terminal/CommandPrompt.cpp
     src/terminal/Typing.cpp
     src/terminal/Dropdwn.cpp
 )
 
-target_include_directories(DeBug PRIVATE src src/terminal raygui)
-target_link_libraries(DeBug PRIVATE raylib)
+target_include_directories(TerminalTest PRIVATE src src/terminal raygui)
+target_link_libraries(TerminalTest PRIVATE raylib)

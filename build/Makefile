@@ -181,17 +181,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named DeBug
+# Target rules for targets named TerminalTest
 
 # Build rule for target.
-DeBug: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 DeBug
-.PHONY : DeBug
+TerminalTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 TerminalTest
+.PHONY : TerminalTest
 
 # fast build rule for target.
-DeBug/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/build
-.PHONY : DeBug/fast
+TerminalTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/build
+.PHONY : TerminalTest/fast
 
 #=============================================================================
 # Target rules for targets named uninstall
@@ -250,7 +250,7 @@ src/terminal/CommandPrompt.obj: src/terminal/CommandPrompt.cpp.obj
 
 # target to build an object file
 src/terminal/CommandPrompt.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/CommandPrompt.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/CommandPrompt.cpp.obj
 .PHONY : src/terminal/CommandPrompt.cpp.obj
 
 src/terminal/CommandPrompt.i: src/terminal/CommandPrompt.cpp.i
@@ -258,7 +258,7 @@ src/terminal/CommandPrompt.i: src/terminal/CommandPrompt.cpp.i
 
 # target to preprocess a source file
 src/terminal/CommandPrompt.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/CommandPrompt.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/CommandPrompt.cpp.i
 .PHONY : src/terminal/CommandPrompt.cpp.i
 
 src/terminal/CommandPrompt.s: src/terminal/CommandPrompt.cpp.s
@@ -266,7 +266,7 @@ src/terminal/CommandPrompt.s: src/terminal/CommandPrompt.cpp.s
 
 # target to generate assembly for a file
 src/terminal/CommandPrompt.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/CommandPrompt.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/CommandPrompt.cpp.s
 .PHONY : src/terminal/CommandPrompt.cpp.s
 
 src/terminal/Dropdwn.obj: src/terminal/Dropdwn.cpp.obj
@@ -274,7 +274,7 @@ src/terminal/Dropdwn.obj: src/terminal/Dropdwn.cpp.obj
 
 # target to build an object file
 src/terminal/Dropdwn.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/Dropdwn.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/Dropdwn.cpp.obj
 .PHONY : src/terminal/Dropdwn.cpp.obj
 
 src/terminal/Dropdwn.i: src/terminal/Dropdwn.cpp.i
@@ -282,7 +282,7 @@ src/terminal/Dropdwn.i: src/terminal/Dropdwn.cpp.i
 
 # target to preprocess a source file
 src/terminal/Dropdwn.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/Dropdwn.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/Dropdwn.cpp.i
 .PHONY : src/terminal/Dropdwn.cpp.i
 
 src/terminal/Dropdwn.s: src/terminal/Dropdwn.cpp.s
@@ -290,7 +290,7 @@ src/terminal/Dropdwn.s: src/terminal/Dropdwn.cpp.s
 
 # target to generate assembly for a file
 src/terminal/Dropdwn.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/Dropdwn.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/Dropdwn.cpp.s
 .PHONY : src/terminal/Dropdwn.cpp.s
 
 src/terminal/Typing.obj: src/terminal/Typing.cpp.obj
@@ -298,7 +298,7 @@ src/terminal/Typing.obj: src/terminal/Typing.cpp.obj
 
 # target to build an object file
 src/terminal/Typing.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/Typing.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/Typing.cpp.obj
 .PHONY : src/terminal/Typing.cpp.obj
 
 src/terminal/Typing.i: src/terminal/Typing.cpp.i
@@ -306,7 +306,7 @@ src/terminal/Typing.i: src/terminal/Typing.cpp.i
 
 # target to preprocess a source file
 src/terminal/Typing.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/Typing.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/Typing.cpp.i
 .PHONY : src/terminal/Typing.cpp.i
 
 src/terminal/Typing.s: src/terminal/Typing.cpp.s
@@ -314,7 +314,7 @@ src/terminal/Typing.s: src/terminal/Typing.cpp.s
 
 # target to generate assembly for a file
 src/terminal/Typing.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/terminal/Typing.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/terminal/Typing.cpp.s
 .PHONY : src/terminal/Typing.cpp.s
 
 src/testing.obj: src/testing.cpp.obj
@@ -322,7 +322,7 @@ src/testing.obj: src/testing.cpp.obj
 
 # target to build an object file
 src/testing.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/testing.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/testing.cpp.obj
 .PHONY : src/testing.cpp.obj
 
 src/testing.i: src/testing.cpp.i
@@ -330,7 +330,7 @@ src/testing.i: src/testing.cpp.i
 
 # target to preprocess a source file
 src/testing.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/testing.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/testing.cpp.i
 .PHONY : src/testing.cpp.i
 
 src/testing.s: src/testing.cpp.s
@@ -338,7 +338,7 @@ src/testing.s: src/testing.cpp.s
 
 # target to generate assembly for a file
 src/testing.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\DeBug.dir\build.make CMakeFiles/DeBug.dir/src/testing.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TerminalTest.dir\build.make CMakeFiles/TerminalTest.dir/src/testing.cpp.s
 .PHONY : src/testing.cpp.s
 
 # Help Target
@@ -357,7 +357,7 @@ help:
 	@echo ... rebuild_cache
 	@echo ... uninstall
 	@echo ... update_mappings
-	@echo ... DeBug
+	@echo ... TerminalTest
 	@echo ... glfw
 	@echo ... raylib
 	@echo ... src/terminal/CommandPrompt.obj

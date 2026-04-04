@@ -1,4 +1,4 @@
-C:/Users/carli/Documents/Hackathon/De-Bug/build/CMakeFiles/DeBug.dir
+C:/Users/carli/Documents/Hackathon/De-Bug/build/CMakeFiles/TerminalTest.dir
 C:/Users/carli/Documents/Hackathon/De-Bug/build/CMakeFiles/package.dir
 C:/Users/carli/Documents/Hackathon/De-Bug/build/CMakeFiles/package_source.dir
 C:/Users/carli/Documents/Hackathon/De-Bug/build/CMakeFiles/edit_cache.dir
