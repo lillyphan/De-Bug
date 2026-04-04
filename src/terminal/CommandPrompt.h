@@ -9,6 +9,7 @@
 class CommandPrompt : public Terminal {
 private:
     std::string prompt;
+    std::string hint;
     std::vector<std::string> availableCommands;
     std::vector<PuzzleFile>* files;
 
@@ -17,16 +18,17 @@ private:
     bool finished;
 
     std::string requestedOpenFile;
-    std::string requestedRunFile;
 
     std::vector<std::string> tokenize(const std::string& text) const;
     bool isValidCommand(const std::string& command) const;
     PuzzleFile* findFile(const std::string& filename);
     bool checkFileCorrectness(const PuzzleFile& file) const;
+    void showHelp();
     void processInput(const std::string& text);
 
 public:
     CommandPrompt(const std::string& prompt,
+                  const std::string& hint,
                   const std::vector<std::string>& availableCommands,
                   std::vector<PuzzleFile>* files);
 
@@ -37,10 +39,6 @@ public:
     bool wantsToOpenFile() const;
     std::string getRequestedOpenFile() const;
     void clearOpenRequest();
-
-    bool wantsToRunFile() const;
-    std::string getRequestedRunFile() const;
-    void clearRunRequest();
 
     void addLine(const std::string& line);
 };

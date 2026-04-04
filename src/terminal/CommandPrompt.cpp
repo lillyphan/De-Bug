@@ -4,17 +4,17 @@
 #include <algorithm>
 
 CommandPrompt::CommandPrompt(const std::string& prompt,
+                             const std::string& hint,
                              const std::vector<std::string>& availableCommands,
                              std::vector<PuzzleFile>* files)
     : prompt(prompt),
+      hint(hint),
       availableCommands(availableCommands),
       files(files),
       finished(false),
-      requestedOpenFile(""),
-      requestedRunFile("")
+      requestedOpenFile("")
 {
     log.push_back(prompt);
-    log.push_back("Type help for commands.");
 }
 
 std::vector<std::string> CommandPrompt::tokenize(const std::string& text) const {
@@ -41,6 +41,7 @@ PuzzleFile* CommandPrompt::findFile(const std::string& filename) {
             return &file;
         }
     }
+
     return nullptr;
 }
 
@@ -48,8 +49,6 @@ bool CommandPrompt::checkFileCorrectness(const PuzzleFile& file) const {
     if (!file.saved) return false;
 
     if (file.type == FileType::Typing) {
-        if (file.typingSavedAnswers.size() != file.typingSolutions.size()) return false;
-
         for (int i = 0; i < (int)file.typingSolutions.size(); i++) {
             if (file.typingSavedAnswers[i] != file.typingSolutions[i]) {
                 return false;
@@ -59,15 +58,9 @@ bool CommandPrompt::checkFileCorrectness(const PuzzleFile& file) const {
     }
 
     if (file.type == FileType::Dropdwn) {
-        if (file.dropdownSavedIndices.size() != file.dropdownSolutions.size()) return false;
-
         for (int i = 0; i < (int)file.dropdownSolutions.size(); i++) {
-            int selected = file.dropdownSavedIndices[i];
-            if (selected < 0 || selected >= (int)file.dropdownOptions[i].size()) {
-                return false;
-            }
-
-            if (file.dropdownOptions[i][selected] != file.dropdownSolutions[i]) {
+            int idx = file.dropdownSavedIndices[i];
+            if (file.dropdownOptions[i][idx] != file.dropdownSolutions[i]) {
                 return false;
             }
         }
@@ -77,34 +70,54 @@ bool CommandPrompt::checkFileCorrectness(const PuzzleFile& file) const {
     return false;
 }
 
+void CommandPrompt::showHelp() {
+    log.push_back("Available commands:");
+
+    for (const auto& cmd : availableCommands) {
+        if (cmd == "help") {
+            log.push_back("help - show available commands");
+        }
+        else if (cmd == "ls") {
+            log.push_back("ls - list files");
+        }
+        else if (cmd == "nano") {
+            log.push_back("nano <file> - open file");
+        }
+        else if (cmd == "run") {
+            log.push_back("run <file> - check correctness");
+        }
+        else if (cmd == "hint") {
+            log.push_back("hint - show a hint");
+        }
+        else {
+            log.push_back(cmd);
+        }
+    }
+}
+
 void CommandPrompt::processInput(const std::string& text) {
     log.push_back("> " + text);
 
     auto tokens = tokenize(text);
 
-    if (tokens.empty()) {
-        return;
-    }
+    if (tokens.empty()) return;
 
     if (!isValidCommand(tokens[0])) {
-        log.push_back("Unknown command; type \"help\" for commands.");
+        log.push_back("Unknown command; type \"help\".");
         return;
     }
 
     if (tokens[0] == "help") {
-        log.push_back("Available commands:");
-        for (const auto& cmd : availableCommands) {
-            log.push_back(" - " + cmd);
-        }
+        showHelp();
+        return;
+    }
+
+    if (tokens[0] == "hint") {
+        log.push_back("Hint: " + hint);
         return;
     }
 
     if (tokens[0] == "ls") {
-        if (!files || files->empty()) {
-            log.push_back("No files available.");
-            return;
-        }
-
         for (const auto& file : *files) {
             log.push_back(file.name);
         }
@@ -141,14 +154,14 @@ void CommandPrompt::processInput(const std::string& text) {
         }
 
         if (!file->saved) {
-            log.push_back("You must save the file before running it.");
+            log.push_back("You must save before running.");
             return;
         }
 
         if (checkFileCorrectness(*file)) {
             log.push_back(file->name + " ran successfully.");
         } else {
-            log.push_back(file->name + " is still incorrect.");
+            log.push_back(file->name + " is incorrect.");
         }
 
         return;
@@ -204,18 +217,6 @@ std::string CommandPrompt::getRequestedOpenFile() const {
 void CommandPrompt::clearOpenRequest() {
     requestedOpenFile.clear();
     finished = false;
-}
-
-bool CommandPrompt::wantsToRunFile() const {
-    return !requestedRunFile.empty();
-}
-
-std::string CommandPrompt::getRequestedRunFile() const {
-    return requestedRunFile;
-}
-
-void CommandPrompt::clearRunRequest() {
-    requestedRunFile.clear();
 }
 
 void CommandPrompt::addLine(const std::string& line) {

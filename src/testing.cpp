@@ -12,7 +12,9 @@ int main() {
     InitWindow(1000, 700, "De-Bug Test");
     SetTargetFPS(60);
 
-    // Hardcoded version of:
+    std::vector<PuzzleFile> files;
+
+    // Hardcoded test file based on your text format:
     //
     // Why does it keep crashing!?!?!? Fix it!!!
     // crash.py
@@ -25,8 +27,6 @@ int main() {
     //                  _
     // crash !crash
     // !crash
-
-    std::vector<PuzzleFile> files;
 
     PuzzleFile crashFile;
     crashFile.name = "crash.py";
@@ -49,13 +49,16 @@ int main() {
 
     files.push_back(crashFile);
 
+    std::string prompt = "Why does it keep crashing!?!?!? Fix it!!!";
+    std::string hint = "Maybe look at the files available? Edit the file?";
     std::vector<std::string> commands = {
-        "help", "ls", "nano", "run"
+        "help", "ls", "nano", "run", "hint"
     };
 
     std::unique_ptr<Terminal> currentScreen =
         std::make_unique<CommandPrompt>(
-            "Why does it keep crashing!?!?!? Fix it!!!",
+            prompt,
+            hint,
             commands,
             &files
         );
@@ -68,11 +71,11 @@ int main() {
         currentScreen->draw();
         EndDrawing();
 
-        // If command prompt requests opening a file, switch screens
-        if (auto* prompt = dynamic_cast<CommandPrompt*>(currentScreen.get())) {
-            if (prompt->wantsToOpenFile()) {
-                std::string filename = prompt->getRequestedOpenFile();
-                prompt->clearOpenRequest();
+        // If currently on command prompt, check whether user wants to open a file
+        if (auto* promptScreen = dynamic_cast<CommandPrompt*>(currentScreen.get())) {
+            if (promptScreen->wantsToOpenFile()) {
+                std::string filename = promptScreen->getRequestedOpenFile();
+                promptScreen->clearOpenRequest();
 
                 PuzzleFile* selectedFile = nullptr;
                 for (auto& file : files) {
@@ -85,16 +88,18 @@ int main() {
                 if (selectedFile != nullptr) {
                     if (selectedFile->type == FileType::Dropdwn) {
                         currentScreen = std::make_unique<Dropdwn>(selectedFile);
-                    } else if (selectedFile->type == FileType::Typing) {
+                    }
+                    else if (selectedFile->type == FileType::Typing) {
                         currentScreen = std::make_unique<Typing>(selectedFile);
                     }
                 }
             }
         }
-        // If an editor is finished, return to command prompt
+        // If an editor finishes, return to command prompt
         else if (currentScreen->isFinished()) {
             currentScreen = std::make_unique<CommandPrompt>(
-                "Why does it keep crashing!?!?!? Fix it!!!",
+                prompt,
+                hint,
                 commands,
                 &files
             );
