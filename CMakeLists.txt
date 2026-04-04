@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(DeBug CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
@@ -13,14 +14,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-add_executable(main
-    src/core/main.cpp
-    src/core/CommandParser.cpp
-    src/core/PuzzleEngine.cpp
-    src/terminal/CommandPrompt.cpp
-    src/terminal/Typing.cpp
-    src/terminal/Dropdwn.cpp
+add_executable(testLvl
+    src/testingLevel.cpp
+    src/core/LevelLoader.cpp
 )
 
-target_include_directories(main PRIVATE src src/terminal raygui)
-target_link_libraries(main PRIVATE raylib)
+target_include_directories(testLvl PRIVATE
+    src
+    src/core/headers
+)
+
+target_link_libraries(testLvl PRIVATE raylib)
