@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "PuzzleType.h"
 
 // -------------------------------------------------------
 // RoomObject — a thing in the room that can change state
@@ -37,13 +38,17 @@ struct Dropdown {
 };
 
 struct PuzzleState {
-    std::string  id;
+    std::string id;
     PuzzleStatus status = PuzzleStatus::Locked; // start as locked
+    PuzzleType type = PuzzleType::Code;
     int attempts = 0;
 
     std::vector<Dropdown> dropdowns;    // one per dropdown widget, in order
-    std::string playerCode;  // the edited code snippet
-    std::string startingCode;
+    std::vector<std::string> correctSequence; //correct sequence of dropdown buttons
+
+    std::string  playerCode; //edited code
+    std::string  startingCode; //starting
+    std::string  correctCode; //the "key"
     std::string hint;
 
     // convenience — did the player pick something in every dropdown?
