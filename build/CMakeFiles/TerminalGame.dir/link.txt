@@ -1,3 +1,1 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\TerminalGame.dir/objects.a
-C:\mingw64\mingw64\bin\ar.exe qc CMakeFiles\TerminalGame.dir/objects.a @CMakeFiles\TerminalGame.dir\objects1.rsp
-C:\mingw64\mingw64\bin\g++.exe -Wl,--whole-archive CMakeFiles\TerminalGame.dir/objects.a -Wl,--no-whole-archive -o TerminalGame.exe -Wl,--out-implib,libTerminalGame.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\TerminalGame.dir\linkLibs.rsp
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/TerminalGame.dir/src/terminal.cpp.o -o TerminalGame  _deps/raylib-build/raylib/libraylib.a -framework OpenGL -framework Cocoa -framework IOKit -framework CoreFoundation

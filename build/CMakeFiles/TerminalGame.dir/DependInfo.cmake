@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/carli/Documents/Hackathon/De-Bug/src/terminal.cpp" "CMakeFiles/TerminalGame.dir/src/terminal.cpp.obj" "gcc" "CMakeFiles/TerminalGame.dir/src/terminal.cpp.obj.d"
+  "/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal.cpp" "CMakeFiles/TerminalGame.dir/src/terminal.cpp.o" "gcc" "CMakeFiles/TerminalGame.dir/src/terminal.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

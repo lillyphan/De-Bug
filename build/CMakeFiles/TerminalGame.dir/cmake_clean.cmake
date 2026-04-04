@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/TerminalGame.dir/src/terminal.cpp.obj"
-  "CMakeFiles/TerminalGame.dir/src/terminal.cpp.obj.d"
-  "TerminalGame.exe"
-  "TerminalGame.exe.manifest"
+  "CMakeFiles/TerminalGame.dir/src/terminal.cpp.o"
+  "CMakeFiles/TerminalGame.dir/src/terminal.cpp.o.d"
+  "TerminalGame"
   "TerminalGame.pdb"
-  "libTerminalGame.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.
