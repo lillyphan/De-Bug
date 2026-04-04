@@ -1,5 +1,5 @@
 #include <cmath>
-//#include <iostream>
+#include <iostream>
 #include "raylib.h"
 #include "raymath.h"
 using namespace std;
