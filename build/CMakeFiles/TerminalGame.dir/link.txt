@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o -o TerminalGame  _deps/raylib-build/raylib/libraylib.a -framework OpenGL -framework Cocoa -framework IOKit -framework CoreFoundation

@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(TerminalGame CXX)
+project(DeBug CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
@@ -14,12 +13,12 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-add_executable(TerminalGame
-    src/terminal/terminal.cpp
+add_executable(DeBug
+    src/testing.cpp
+    src/terminal/CommandPrompt.cpp
+    src/terminal/Typing.cpp
+    src/terminal/Dropdwn.cpp
 )
 
-add_executable(main
-    src/core/main.cpp
-)
-
-target_link_libraries(TerminalGame PRIVATE raylib)
+target_include_directories(DeBug PRIVATE src src/terminal raygui)
+target_link_libraries(DeBug PRIVATE raylib)
