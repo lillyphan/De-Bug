@@ -1,10 +1,10 @@
 #include <cmath>
-//#include <iostream>
+#include <iostream>
 #include "raylib.h"
 #include "raymath.h"
 using namespace std;
 
-// var ptr, {x lower, x upper}, {y lower, y upper}, {z lower, z upper }
+// var ptr, {x lower, x upper}, {y lower, y upper}, {z lower, z upper}
 void boundPos(Vector3 &var, float x[2], float y[2], float z[2]) {
 if (var.x > x[1]) {
 var.x = x[1];
