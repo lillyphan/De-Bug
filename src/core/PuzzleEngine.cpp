@@ -28,19 +28,19 @@ bool PuzzleEngine::validateCode(const PuzzleState& ps)
 // -------------------------------------------------------
 bool PuzzleEngine::validateDropdown(const PuzzleState& ps)
 {
-    // Must have the same number of dropdowns as expected answers
+    //must have the same number of dropdowns as expected answers
     if (ps.dropdowns.size() != ps.correctSequence.size())
         return false;
 
     for (int i = 0; i < (int)ps.dropdowns.size(); i++) {
         const Dropdown& d = ps.dropdowns[i];
 
-        // Nothing selected in this slot
+        //nothing selected in this slot
         if (d.selectedIndex < 0 ||
             d.selectedIndex >= (int)d.options.size())
             return false;
 
-        // Compare selected option against correct answer at this position
+        //compare selected option against correct answer at this position
         if (normalise(d.selected()) != normalise(ps.correctSequence[i]))
             return false;
     }
@@ -54,7 +54,7 @@ bool PuzzleEngine::validateDropdown(const PuzzleState& ps)
 std::string PuzzleEngine::normalise(const std::string& s)
 {
     std::string out;
-    bool lastWasSpace = true;  // true to trim leading whitespace
+    bool lastWasSpace = true; //true to trim leading whitespace
 
     for (unsigned char c : s) {
         if (std::isspace(c)) {
@@ -67,7 +67,7 @@ std::string PuzzleEngine::normalise(const std::string& s)
         }
     }
 
-    // Trim trailing space
+    //trim trailing space
     if (!out.empty() && out.back() == ' ')
         out.pop_back();
 

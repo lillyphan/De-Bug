@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/TerminalGame.dir/src/terminal.cpp.o"
-  "CMakeFiles/TerminalGame.dir/src/terminal.cpp.o.d"
+  "CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o"
+  "CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o.d"
   "TerminalGame"
   "TerminalGame.pdb"
 )

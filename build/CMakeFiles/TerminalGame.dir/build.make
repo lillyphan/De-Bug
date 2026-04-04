@@ -72,28 +72,28 @@ include CMakeFiles/TerminalGame.dir/flags.make
 CMakeFiles/TerminalGame.dir/codegen:
 .PHONY : CMakeFiles/TerminalGame.dir/codegen
 
-CMakeFiles/TerminalGame.dir/src/terminal.cpp.o: CMakeFiles/TerminalGame.dir/flags.make
-CMakeFiles/TerminalGame.dir/src/terminal.cpp.o: /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal.cpp
-CMakeFiles/TerminalGame.dir/src/terminal.cpp.o: CMakeFiles/TerminalGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/TerminalGame.dir/src/terminal.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TerminalGame.dir/src/terminal.cpp.o -MF CMakeFiles/TerminalGame.dir/src/terminal.cpp.o.d -o CMakeFiles/TerminalGame.dir/src/terminal.cpp.o -c /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal.cpp
+CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o: CMakeFiles/TerminalGame.dir/flags.make
+CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o: /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal/terminal.cpp
+CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o: CMakeFiles/TerminalGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o -MF CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o.d -o CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o -c /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal/terminal.cpp
 
-CMakeFiles/TerminalGame.dir/src/terminal.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/TerminalGame.dir/src/terminal.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal.cpp > CMakeFiles/TerminalGame.dir/src/terminal.cpp.i
+CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal/terminal.cpp > CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.i
 
-CMakeFiles/TerminalGame.dir/src/terminal.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TerminalGame.dir/src/terminal.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal.cpp -o CMakeFiles/TerminalGame.dir/src/terminal.cpp.s
+CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/src/terminal/terminal.cpp -o CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.s
 
 # Object files for target TerminalGame
 TerminalGame_OBJECTS = \
-"CMakeFiles/TerminalGame.dir/src/terminal.cpp.o"
+"CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o"
 
 # External object files for target TerminalGame
 TerminalGame_EXTERNAL_OBJECTS =
 
-TerminalGame: CMakeFiles/TerminalGame.dir/src/terminal.cpp.o
+TerminalGame: CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o
 TerminalGame: CMakeFiles/TerminalGame.dir/build.make
 TerminalGame: _deps/raylib-build/raylib/libraylib.a
 TerminalGame: CMakeFiles/TerminalGame.dir/link.txt

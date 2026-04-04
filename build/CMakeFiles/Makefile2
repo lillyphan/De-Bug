@@ -64,11 +64,13 @@ CMAKE_BINARY_DIR = /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build
 
 # The main recursive "all" target.
 all: CMakeFiles/TerminalGame.dir/all
+all: CMakeFiles/main.dir/all
 all: _deps/raylib-build/all
 .PHONY : all
 
 # The main recursive "codegen" target.
 codegen: CMakeFiles/TerminalGame.dir/codegen
+codegen: CMakeFiles/main.dir/codegen
 codegen: _deps/raylib-build/codegen
 .PHONY : codegen
 
@@ -78,6 +80,7 @@ preinstall: _deps/raylib-build/preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/TerminalGame.dir/clean
+clean: CMakeFiles/main.dir/clean
 clean: _deps/raylib-build/clean
 .PHONY : clean
 
@@ -196,6 +199,38 @@ CMakeFiles/TerminalGame.dir/clean:
 .PHONY : CMakeFiles/TerminalGame.dir/clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/main.dir
+
+# All Build rule for target.
+CMakeFiles/main.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=24,25 "Built target main"
+.PHONY : CMakeFiles/main.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/main.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles 0
+.PHONY : CMakeFiles/main.dir/rule
+
+# Convenience name for target.
+main: CMakeFiles/main.dir/rule
+.PHONY : main
+
+# codegen rule for target.
+CMakeFiles/main.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=24,25 "Finished codegen for target main"
+.PHONY : CMakeFiles/main.dir/codegen
+
+# clean rule for target.
+CMakeFiles/main.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/clean
+.PHONY : CMakeFiles/main.dir/clean
+
+#=============================================================================
 # Target rules for target _deps/raylib-build/CMakeFiles/uninstall.dir
 
 # All Build rule for target.
@@ -234,7 +269,7 @@ _deps/raylib-build/CMakeFiles/uninstall.dir/clean:
 _deps/raylib-build/raylib/CMakeFiles/raylib.dir/all: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build.make _deps/raylib-build/raylib/CMakeFiles/raylib.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build.make _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=24,25,26,27,28,29,30,31 "Built target raylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=26,27,28,29,30,31,32,33 "Built target raylib"
 .PHONY : _deps/raylib-build/raylib/CMakeFiles/raylib.dir/all
 
 # Build rule for subdir invocation for target.
@@ -251,7 +286,7 @@ raylib: _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rule
 # codegen rule for target.
 _deps/raylib-build/raylib/CMakeFiles/raylib.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build.make _deps/raylib-build/raylib/CMakeFiles/raylib.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=24,25,26,27,28,29,30,31 "Finished codegen for target raylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=26,27,28,29,30,31,32,33 "Finished codegen for target raylib"
 .PHONY : _deps/raylib-build/raylib/CMakeFiles/raylib.dir/codegen
 
 # clean rule for target.
@@ -298,7 +333,7 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/clean:
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=32 "Built target update_mappings"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=34 "Built target update_mappings"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all
 
 # Build rule for subdir invocation for target.
@@ -315,7 +350,7 @@ update_mappings: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_m
 # codegen rule for target.
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=32 "Finished codegen for target update_mappings"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lillyphan/Documents/25-26/BlasterHacks/De-Bug/build/CMakeFiles --progress-num=34 "Finished codegen for target update_mappings"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
 
 # clean rule for target.

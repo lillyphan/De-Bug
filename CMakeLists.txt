@@ -15,7 +15,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 
 add_executable(TerminalGame
-    src/terminal.cpp
+    src/terminal/terminal.cpp
+)
+
+add_executable(main
+    src/core/main.cpp
 )
 
 target_link_libraries(TerminalGame PRIVATE raylib)

@@ -195,6 +195,19 @@ TerminalGame/fast:
 .PHONY : TerminalGame/fast
 
 #=============================================================================
+# Target rules for targets named main
+
+# Build rule for target.
+main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
+.PHONY : main
+
+# fast build rule for target.
+main/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
+
+#=============================================================================
 # Target rules for targets named uninstall
 
 # Build rule for target.
@@ -246,29 +259,53 @@ update_mappings/fast:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build
 .PHONY : update_mappings/fast
 
-src/terminal.o: src/terminal.cpp.o
-.PHONY : src/terminal.o
+src/core/main.o: src/core/main.cpp.o
+.PHONY : src/core/main.o
 
 # target to build an object file
-src/terminal.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TerminalGame.dir/build.make CMakeFiles/TerminalGame.dir/src/terminal.cpp.o
-.PHONY : src/terminal.cpp.o
+src/core/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/core/main.cpp.o
+.PHONY : src/core/main.cpp.o
 
-src/terminal.i: src/terminal.cpp.i
-.PHONY : src/terminal.i
+src/core/main.i: src/core/main.cpp.i
+.PHONY : src/core/main.i
 
 # target to preprocess a source file
-src/terminal.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TerminalGame.dir/build.make CMakeFiles/TerminalGame.dir/src/terminal.cpp.i
-.PHONY : src/terminal.cpp.i
+src/core/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/core/main.cpp.i
+.PHONY : src/core/main.cpp.i
 
-src/terminal.s: src/terminal.cpp.s
-.PHONY : src/terminal.s
+src/core/main.s: src/core/main.cpp.s
+.PHONY : src/core/main.s
 
 # target to generate assembly for a file
-src/terminal.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TerminalGame.dir/build.make CMakeFiles/TerminalGame.dir/src/terminal.cpp.s
-.PHONY : src/terminal.cpp.s
+src/core/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/core/main.cpp.s
+.PHONY : src/core/main.cpp.s
+
+src/terminal/terminal.o: src/terminal/terminal.cpp.o
+.PHONY : src/terminal/terminal.o
+
+# target to build an object file
+src/terminal/terminal.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TerminalGame.dir/build.make CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.o
+.PHONY : src/terminal/terminal.cpp.o
+
+src/terminal/terminal.i: src/terminal/terminal.cpp.i
+.PHONY : src/terminal/terminal.i
+
+# target to preprocess a source file
+src/terminal/terminal.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TerminalGame.dir/build.make CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.i
+.PHONY : src/terminal/terminal.cpp.i
+
+src/terminal/terminal.s: src/terminal/terminal.cpp.s
+.PHONY : src/terminal/terminal.s
+
+# target to generate assembly for a file
+src/terminal/terminal.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TerminalGame.dir/build.make CMakeFiles/TerminalGame.dir/src/terminal/terminal.cpp.s
+.PHONY : src/terminal/terminal.cpp.s
 
 # Help Target
 help:
@@ -288,10 +325,14 @@ help:
 	@echo "... update_mappings"
 	@echo "... TerminalGame"
 	@echo "... glfw"
+	@echo "... main"
 	@echo "... raylib"
-	@echo "... src/terminal.o"
-	@echo "... src/terminal.i"
-	@echo "... src/terminal.s"
+	@echo "... src/core/main.o"
+	@echo "... src/core/main.i"
+	@echo "... src/core/main.s"
+	@echo "... src/terminal/terminal.o"
+	@echo "... src/terminal/terminal.i"
+	@echo "... src/terminal/terminal.s"
 .PHONY : help
 
 

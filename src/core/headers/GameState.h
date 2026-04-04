@@ -40,7 +40,7 @@ struct Dropdown {
 struct PuzzleState {
     std::string id;
     PuzzleStatus status = PuzzleStatus::Locked; // start as locked
-    PuzzleType type = PuzzleType::Code;
+    PuzzleType type = PuzzleType::Typing;
     int attempts = 0;
 
     std::vector<Dropdown> dropdowns;    // one per dropdown widget, in order
@@ -51,7 +51,9 @@ struct PuzzleState {
     std::string  correctCode; //the "key"
 
     std::string hint;
+    std::string prompt;
     std::vector<std::string> availableCommands;
+    std::vector<std::string> filenames;
 
     // convenience — did the player pick something in every dropdown?
     bool allDropdownsSelected() const {
