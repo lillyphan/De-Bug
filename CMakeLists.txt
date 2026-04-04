@@ -24,3 +24,10 @@ add_executable(main
 
 target_include_directories(main PRIVATE src src/terminal raygui)
 target_link_libraries(main PRIVATE raylib)
+
+add_executable(renderTest
+    src/renderTesting/renderTest.cpp
+)
+
+target_include_directories(renderTest PRIVATE src)
+target_link_libraries(renderTest PRIVATE raylib)

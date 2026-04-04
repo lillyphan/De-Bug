@@ -195,6 +195,19 @@ main/fast:
 .PHONY : main/fast
 
 #=============================================================================
+# Target rules for targets named renderTest
+
+# Build rule for target.
+renderTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 renderTest
+.PHONY : renderTest
+
+# fast build rule for target.
+renderTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/renderTest.dir/build.make CMakeFiles/renderTest.dir/build
+.PHONY : renderTest/fast
+
+#=============================================================================
 # Target rules for targets named uninstall
 
 # Build rule for target.
@@ -318,6 +331,30 @@ src/core/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/core/main.cpp.s
 .PHONY : src/core/main.cpp.s
 
+src/renderTesting/renderTest.o: src/renderTesting/renderTest.cpp.o
+.PHONY : src/renderTesting/renderTest.o
+
+# target to build an object file
+src/renderTesting/renderTest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/renderTest.dir/build.make CMakeFiles/renderTest.dir/src/renderTesting/renderTest.cpp.o
+.PHONY : src/renderTesting/renderTest.cpp.o
+
+src/renderTesting/renderTest.i: src/renderTesting/renderTest.cpp.i
+.PHONY : src/renderTesting/renderTest.i
+
+# target to preprocess a source file
+src/renderTesting/renderTest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/renderTest.dir/build.make CMakeFiles/renderTest.dir/src/renderTesting/renderTest.cpp.i
+.PHONY : src/renderTesting/renderTest.cpp.i
+
+src/renderTesting/renderTest.s: src/renderTesting/renderTest.cpp.s
+.PHONY : src/renderTesting/renderTest.s
+
+# target to generate assembly for a file
+src/renderTesting/renderTest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/renderTest.dir/build.make CMakeFiles/renderTest.dir/src/renderTesting/renderTest.cpp.s
+.PHONY : src/renderTesting/renderTest.cpp.s
+
 src/terminal/CommandPrompt.o: src/terminal/CommandPrompt.cpp.o
 .PHONY : src/terminal/CommandPrompt.o
 
@@ -409,6 +446,7 @@ help:
 	@echo "... glfw"
 	@echo "... main"
 	@echo "... raylib"
+	@echo "... renderTest"
 	@echo "... src/core/CommandParser.o"
 	@echo "... src/core/CommandParser.i"
 	@echo "... src/core/CommandParser.s"
@@ -418,6 +456,9 @@ help:
 	@echo "... src/core/main.o"
 	@echo "... src/core/main.i"
 	@echo "... src/core/main.s"
+	@echo "... src/renderTesting/renderTest.o"
+	@echo "... src/renderTesting/renderTest.i"
+	@echo "... src/renderTesting/renderTest.s"
 	@echo "... src/terminal/CommandPrompt.o"
 	@echo "... src/terminal/CommandPrompt.i"
 	@echo "... src/terminal/CommandPrompt.s"
