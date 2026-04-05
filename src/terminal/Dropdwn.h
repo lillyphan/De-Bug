@@ -4,6 +4,7 @@
 #include "Terminal.h"
 #include "PuzzleFile.h"
 #include <string>
+#include "raylib.h"
 #include <vector>
 
 class Dropdwn : public Terminal {
@@ -23,7 +24,7 @@ private:
     bool isMouseInside(int x, int y, int w, int h) const;
 
 public:
-    explicit Dropdwn(PuzzleFile* file);
+    explicit Dropdwn(PuzzleFile* file, Font font);
 
     void update() override;
     void draw() override;

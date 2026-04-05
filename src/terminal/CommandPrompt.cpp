@@ -3,9 +3,10 @@
 #include <sstream>
 #include <algorithm>
 
-CommandPrompt::CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>* files)
+CommandPrompt::CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>* files, Font font)
     : parser(parser),
       files(files),
+      terminalFont(font),
       finished(false),
       requestedOpenFile("")
 {
@@ -161,11 +162,11 @@ void CommandPrompt::draw()
     int start = (log.size() > 25) ? (int)log.size() - 25 : 0;
 
     for (int i = start; i < (int)log.size(); i++) {
-        DrawText(log[i].c_str(), 40, y, 22, GREEN);
+        DrawTextEx(this->terminalFont, log[i].c_str(), (Vector2){40, (float)y}, 22, 1, GREEN);
         y += 24;
     }
 
-    DrawText((" > " + input).c_str(), 40, 640, 24, GREEN);
+    DrawTextEx(terminalFont, (" > " + input).c_str(), (Vector2){40, 640}, 24, 1, GREEN);
 }
 
 bool CommandPrompt::isFinished() const { return finished; }

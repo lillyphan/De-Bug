@@ -1,9 +1,10 @@
 #include "Typing.h"
 #include "raylib.h"
 
-Typing::Typing(PuzzleFile* file)
+Typing::Typing(PuzzleFile* file, Font font)
     : file(file), finished(false)
 {
+    terminalFont = font;
     int blanks = countBlanks();
 
     if (file->typingSavedAnswers.size() == blanks) {
@@ -57,7 +58,7 @@ void Typing::update() {
 }
 
 void Typing::draw() {
-    DrawText(file->name.c_str(), 40, 20, 30, GREEN);
+    DrawTextEx(terminalFont, file->name.c_str(), (Vector2){40, 20}, 30, 1, GREEN);
 
     int startX = 40;
     int startY = 80;
@@ -77,8 +78,8 @@ void Typing::draw() {
                 currentText += line[j];
             } else {
                 if (!currentText.empty()) {
-                    DrawText(currentText.c_str(), cursorX, y, fontSize, GREEN);
-                    cursorX += MeasureText(currentText.c_str(), fontSize);
+                    DrawTextEx(terminalFont, currentText.c_str(), (Vector2){(float)cursorX, (float)y}, fontSize, 1, GREEN);
+                    cursorX += (int)MeasureTextEx(terminalFont, currentText.c_str(), fontSize, 1).x;
                     currentText.clear();
                 }
 
@@ -87,7 +88,7 @@ void Typing::draw() {
                 DrawRectangleLines(cursorX, y - 4, boxW, boxH, GREEN);
 
                 if (blankIndex < (int)userAnswers.size()) {
-                    DrawText(userAnswers[blankIndex].c_str(), cursorX + 6, y, fontSize, GREEN);
+                    DrawTextEx(terminalFont, userAnswers[blankIndex].c_str(), (Vector2){(float)(cursorX + 6), (float)y}, fontSize, 1, GREEN);
                 }
 
                 cursorX += boxW + 8;
@@ -96,13 +97,13 @@ void Typing::draw() {
         }
 
         if (!currentText.empty()) {
-            DrawText(currentText.c_str(), cursorX, y, fontSize, GREEN);
+            DrawTextEx(terminalFont, currentText.c_str(), (Vector2){(float)cursorX, (float)y}, fontSize, 1, GREEN);
         }
     }
 
     Rectangle saveButton = { 820, 620, 120, 40 };
     DrawRectangleLinesEx(saveButton, 2, GREEN);
-    DrawText("Save", 855, 628, 20, GREEN);
+    DrawTextEx(terminalFont, "Save", (Vector2){855, 628}, 20, 1, GREEN);
 }
 
 bool Typing::isFinished() const {

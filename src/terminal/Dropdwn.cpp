@@ -4,9 +4,10 @@
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
-Dropdwn::Dropdwn(PuzzleFile* file)
+Dropdwn::Dropdwn(PuzzleFile* file, Font font)
     : file(file), finished(false)
 {
+    terminalFont = font;
     int blanks = countBlanks();
 
     if ((int)file->dropdownSavedIndices.size() == blanks) {
@@ -78,7 +79,7 @@ void Dropdwn::update() {
 }
 
 void Dropdwn::draw() {
-    DrawText(file->name.c_str(), 40, 20, 30, GREEN);
+    DrawTextEx(terminalFont, file->name.c_str(), (Vector2){40, 20}, 30, 1, GREEN);
 
     int startX = 40;
     int startY = 80;
@@ -98,7 +99,7 @@ void Dropdwn::draw() {
                 currentText += line[charIndex];
             } else {
                 if (!currentText.empty()) {
-                    DrawText(currentText.c_str(), cursorX, y, fontSize, GREEN);
+                    DrawTextEx(terminalFont, currentText.c_str(), (Vector2){(float)cursorX, (float)y}, fontSize, 1, GREEN);
                     cursorX += MeasureText(currentText.c_str(), fontSize);
                     currentText.clear();
                 }
@@ -130,13 +131,13 @@ void Dropdwn::draw() {
         }
 
         if (!currentText.empty()) {
-            DrawText(currentText.c_str(), cursorX, y, fontSize, GREEN);
+            DrawTextEx(terminalFont, currentText.c_str(), (Vector2){(float)cursorX, (float)y}, fontSize, 1, GREEN);
         }
     }
 
     Rectangle saveButton = { 820, 620, 120, 40 };
     DrawRectangleLinesEx(saveButton, 2, GREEN);
-    DrawText("Save", 855, 628, 20, GREEN);
+    DrawTextEx(terminalFont, "Save", (Vector2){855, 628}, 20, 1, GREEN);
 }
 
 bool Dropdwn::isFinished() const {

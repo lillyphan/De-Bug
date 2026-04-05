@@ -1,10 +1,10 @@
-Why does it keep crashing!?!?!? Fix it!!!
+Why does it keep crashing!?!?!? Fix it!!! (type help for help)
 crash.py
 Maybe look at the files available? Edit the file?
-ls nano 
+ls nano help hint run
 tp
 3
 codeline1
-codeline2_codeline3
+codeline2  _  codeline3
 codeline4
 solution

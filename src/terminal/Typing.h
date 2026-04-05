@@ -5,6 +5,7 @@
 #include "PuzzleFile.h"
 #include <string>
 #include <vector>
+#include "raylib.h"
 
 class Typing : public Terminal {
 private:
@@ -16,7 +17,7 @@ private:
     bool isMouseInside(int x, int y, int w, int h) const;
 
 public:
-    explicit Typing(PuzzleFile* file);
+    explicit Typing(PuzzleFile* file, Font font);
 
     void update() override;
     void draw() override;

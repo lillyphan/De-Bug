@@ -6,6 +6,7 @@
 #include "core/headers/CommandParser.h"
 #include <string>
 #include <vector>
+#include "raylib.h"
 
 // -------------------------------------------------------
 // CommandPrompt — the CLI terminal window where users can run commands
@@ -14,6 +15,7 @@ class CommandPrompt : public Terminal {
 private:
     std::vector<PuzzleFile>* files;
     CommandParser&           parser;
+    Font terminalFont;
 
     std::vector<std::string> log;
     std::string              input;
@@ -28,7 +30,7 @@ private:
 
 public:
     //use CommandParser, should have already constructed that with GameState
-    CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>*  files);
+    CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>*  files, Font font);
 
     void update()          override;
     void draw()            override;
