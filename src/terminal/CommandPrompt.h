@@ -21,6 +21,7 @@ private:
     std::string              input;
     bool                     finished;
     std::string              requestedOpenFile;
+    bool exitRequested;
 
     //helper
     std::vector<std::string> tokenize(const std::string& text) const;
@@ -35,6 +36,7 @@ public:
     void update()          override;
     void draw()            override;
     bool isFinished() const override;
+    bool wantsToExit() const;
 
     bool        wantsToOpenFile()      const;
     std::string getRequestedOpenFile() const;

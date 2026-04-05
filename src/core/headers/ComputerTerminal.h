@@ -19,6 +19,8 @@ public:
     void close();
     bool isOpen() const;
 
+    GameState& getGameState() { return gameState; }
+
     Font terminalFont;
 
     void update();

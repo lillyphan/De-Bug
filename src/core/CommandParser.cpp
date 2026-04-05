@@ -20,6 +20,7 @@ CommandResult CommandParser::submit(const std::string &rawInput, const std::vect
     if (cmd == "help") return handleHelp();
     if (cmd == "clear") return handleClear();
     if (cmd == "hint") return handleHint();
+    if (cmd == "exit") return handleExit();
 
     //puzzle submission
     if (cmd == "run")
@@ -77,6 +78,13 @@ CommandResult CommandParser::handleHint()
         result.lines.push_back("No hint available for this puzzle.");
     }
 
+    return result;
+}
+
+CommandResult CommandParser::handleExit()
+{
+    CommandResult result;
+    result.exit = true;
     return result;
 }
 

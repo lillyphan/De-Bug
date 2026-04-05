@@ -237,6 +237,17 @@ int main() {
             bool hitDoor = isTouchingBox(playerBox, doorBox);
             bool hitPlatform = false;
 
+            // Check if puzzle was just solved — unlock the door
+                Room* room = terminal.getGameState().getRoom("room_01");
+                bool doorUnlocked = room && room->doorUnlocked;
+
+                if (hitDoor && doorUnlocked) {
+                    // ADD LOGIC to move to the next room
+                    DrawText("SUCCESS, door is open.", 10, 110, 20, DARKGREEN);
+                } else if (hitDoor && !doorUnlocked) {
+                    DrawText("Door is locked.", 10, 110, 20, DARKGREEN);
+                }
+
             for (const BoundingBox& box : platformBounds) {
                 if (isTouchingBox(playerBox, box)) {
                     hitPlatform = true;
@@ -258,6 +269,7 @@ int main() {
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
                 terminal.open("room_01");
+
             }
         }
 

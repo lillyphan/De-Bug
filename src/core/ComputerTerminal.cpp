@@ -82,6 +82,12 @@ void ComputerTerminal::update() {
 
     commandPrompt->update();
 
+    // get the last result from commandPrompt somehow
+        if (commandPrompt->wantsToExit()) {
+            close();
+            return;
+        }
+
     if (commandPrompt->wantsToOpenFile()) {
         std::string fname = commandPrompt->getRequestedOpenFile();
         commandPrompt->clearOpenRequest();

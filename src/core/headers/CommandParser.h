@@ -8,8 +8,9 @@
 // -------------------------------------------------------
 struct CommandResult {
     std::vector<std::string> lines;
-    bool                     solved = false;
-    bool                     clear  = false;
+    bool solved = false;
+    bool clear  = false;
+    bool exit   = false;
 };
 
 // -------------------------------------------------------
@@ -32,6 +33,7 @@ private:
     CommandResult handleHelp();
     CommandResult handleClear();
     CommandResult handleHint();
+    CommandResult handleExit();
     CommandResult handleRun(const std::string&              playerCode,
                             const std::vector<std::string>& dropdownSelections);
 

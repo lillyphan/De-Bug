@@ -8,7 +8,9 @@ CommandPrompt::CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>* fil
       files(files),
       terminalFont(font),
       finished(false),
+      exitRequested(false),
       requestedOpenFile("")
+      
 {
     //show the room prompt on open
     Room* room = parser.currentRoom();
@@ -44,6 +46,8 @@ PuzzleFile* CommandPrompt::findFile(const std::string& filename)
         if (f.name == filename) return &f;
     return nullptr;
 }
+
+bool CommandPrompt::wantsToExit() const { return exitRequested; }
 
 // -------------------------------------------------------
 // Command processing, routes built-in file commands
@@ -123,6 +127,10 @@ void CommandPrompt::processInput(const std::string& text)
 
     //CommandParser stuff
     CommandResult result = parser.submit(tokens[0], {}, "");
+    if (result.exit) {
+        exitRequested = true;
+        return;
+    }
 
     if (result.clear) {
         log.clear();
