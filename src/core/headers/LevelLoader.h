@@ -17,9 +17,50 @@ struct PlaneObject {
     Color color;
 };
 
+struct SphereObject {
+    Vector3 position;
+    float radius;
+    Color color;
+};
+
+struct CylinderExObject {
+    Vector3 startPos;
+    Vector3 endPos;
+    float startRadius;
+    float endRadius;
+    int sides;
+    Color color;
+};
+
+struct FishObject {
+    Vector3 position;
+    Color color;
+    float facing;
+};
+
+struct JellyfishObject {
+    Vector3 position;
+    Color color;
+};
+
+struct SeaweedObject {
+    Vector3 basePos;
+    Color color;
+};
+
+struct BubbleColumnObject {
+    Vector3 basePos;
+    float timeOffset;
+};
+
+struct StingrayPlatformObject {
+    Vector3 position;
+};
+
 struct InteractableObject {
     std::string id;
     Vector3 position;
+    Vector3 size;
 };
 
 struct LevelData {
@@ -31,16 +72,21 @@ struct LevelData {
 
     std::vector<BoxObject> boxes;
     std::vector<PlaneObject> planes;
+    std::vector<SphereObject> spheres;
+    std::vector<CylinderExObject> cylinders;
+    std::vector<FishObject> fish;
+    std::vector<JellyfishObject> jellyfish;
+    std::vector<SeaweedObject> seaweed;
+    std::vector<BubbleColumnObject> bubbleColumns;
+    std::vector<StingrayPlatformObject> stingrayPlatforms;
 };
 
-// Fixed dimensions for special objects
-constexpr Vector3 COMPUTER_SIZE = { 2.0f, 1.5f, 1.5f };
-constexpr Vector3 DOOR_SIZE     = { 8.0f, 14.0f, 2.0f };
+constexpr Vector3 DEFAULT_COMPUTER_SIZE = { 2.0f, 1.5f, 1.5f };
+constexpr Vector3 DEFAULT_DOOR_SIZE     = { 8.0f, 14.0f, 2.0f };
 
-Color parseColor(const std::string& colorName);
+Color parseColor(const std::string& colorToken);
 bool loadLevelFile(const std::string& filename, LevelData& level);
 
-// Collision helpers
 BoundingBox makeBoundingBox(Vector3 center, Vector3 size);
 BoundingBox getComputerBounds(const LevelData& level);
 BoundingBox getDoorBounds(const LevelData& level);

@@ -3,6 +3,7 @@
 #include <vector>
 #include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
 
 using namespace std;
 
@@ -34,6 +35,89 @@ struct Platform {
     Color color;
 };
 
+void drawFish(Vector3 pos, Color bodyColor, float facing) {
+    DrawSphere(pos, 1.2f, bodyColor);
+    DrawSphere({ pos.x + 0.9f * facing, pos.y + 0.15f, pos.z + 0.9f }, 0.12f, BLACK);
+
+    rlPushMatrix();
+    rlTranslatef(pos.x - 1.5f * facing, pos.y, pos.z);
+    rlRotatef((facing > 0.0f) ? 25.0f : -25.0f, 0.0f, 1.0f, 0.0f);
+    DrawCubeV({ 0.0f, 0.0f, 0.0f }, { 1.2f, 1.0f, 0.4f }, bodyColor);
+    rlPopMatrix();
+
+    DrawCubeV({ pos.x - 0.2f * facing, pos.y + 0.7f, pos.z }, { 0.9f, 0.25f, 0.5f }, bodyColor);
+}
+
+void drawJellyfish(Vector3 pos, Color bodyColor) {
+    DrawSphere(pos, 1.3f, bodyColor);
+
+    for (int i = -1; i <= 1; i++) {
+        float x = pos.x + i * 0.5f;
+        DrawCylinderEx(
+            { x, pos.y - 0.6f, pos.z + 0.1f * i },
+            { x + 0.2f * i, pos.y - 3.2f, pos.z + 0.15f * i },
+            0.08f,
+            0.05f,
+            6,
+            Fade(bodyColor, 0.8f)
+        );
+    }
+}
+
+void drawSeaweed(Vector3 basePos, Color color) {
+    DrawCylinderEx(
+        { basePos.x, basePos.y, basePos.z },
+        { basePos.x + 0.4f, basePos.y + 4.5f, basePos.z + 0.2f },
+        0.30f,
+        0.18f,
+        6,
+        color
+    );
+
+    DrawCylinderEx(
+        { basePos.x + 0.6f, basePos.y, basePos.z - 0.3f },
+        { basePos.x + 1.0f, basePos.y + 3.6f, basePos.z + 0.5f },
+        0.24f,
+        0.14f,
+        6,
+        color
+    );
+}
+
+void drawBubbleColumn(Vector3 basePos, float timeOffset) {
+    for (int i = 0; i < 5; i++) {
+        float rise = fmodf((float)GetTime() * 1.2f + timeOffset + i * 1.4f, 8.0f);
+        Vector3 bubblePos = {
+            basePos.x + sinf((float)GetTime() + i) * 0.15f,
+            basePos.y + rise,
+            basePos.z + cosf((float)GetTime() + i) * 0.15f
+        };
+        DrawSphere(bubblePos, 0.22f + 0.03f * i, Fade(SKYBLUE, 0.65f));
+    }
+}
+
+void drawStingrayPlatform(Vector3 pos) {
+    Color rayColor = { 85, 105, 120, 255 };
+
+    DrawSphere({ pos.x, pos.y, pos.z }, 3.4f, rayColor);
+    DrawSphere({ pos.x - 2.4f, pos.y, pos.z }, 2.2f, rayColor);
+    DrawSphere({ pos.x + 2.4f, pos.y, pos.z }, 2.2f, rayColor);
+
+    DrawCubeV({ pos.x, pos.y + 0.4f, pos.z }, { 9.0f, 1.2f, 8.0f }, rayColor);
+
+    DrawCylinderEx(
+        { pos.x, pos.y - 0.2f, pos.z - 4.0f },
+        { pos.x, pos.y - 0.6f, pos.z - 11.0f },
+        0.18f,
+        0.05f,
+        6,
+        rayColor
+    );
+
+    DrawSphere({ pos.x - 1.0f, pos.y + 1.1f, pos.z + 1.2f }, 0.18f, BLACK);
+    DrawSphere({ pos.x + 1.0f, pos.y + 1.1f, pos.z + 1.2f }, 0.18f, BLACK);
+}
+
 int main(void) {
     const int screenWidth = 800;
     const int screenHeight = 450;
@@ -48,7 +132,6 @@ int main(void) {
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
-    float camSize[2] = {75, (9/16*75)};
     Vector3 camPos = { 0.0f, 10.0f, 20.0f };
 
     Model computerModel = LoadModel("objects/computer.obj");
@@ -75,10 +158,10 @@ int main(void) {
     float diagBugSpeed = sqrt(0.5f * bugSpeed * bugSpeed);
 
     vector<Platform> platforms = {
-        {{  28.0f, -40.0f,  22.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{   8.0f, -28.0f,   2.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{ -16.0f, -16.0f, -20.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{  16.0f,  -4.0f, -30.0f }, { 16.0f, 2.0f, 16.0f }, DARKGRAY}
+        {{  28.0f, -40.0f,  22.0f }, { 14.0f, 2.0f, 14.0f }, { 95, 125, 135, 255 }},
+        {{   8.0f, -28.0f,   2.0f }, { 14.0f, 2.0f, 14.0f }, { 90, 120, 130, 255 }},
+        {{ -16.0f, -16.0f, -20.0f }, { 14.0f, 2.0f, 14.0f }, { 95, 125, 135, 255 }},
+        {{  16.0f,  -4.0f, -30.0f }, { 16.0f, 2.0f, 16.0f }, { 100, 135, 145, 255 }}
     };
 
     Vector3 computerPos = {
@@ -172,20 +255,99 @@ int main(void) {
         camera.target = bugPos;
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground({ 0, 0, 0, 255 });
 
         BeginMode3D(camera);
 
-        DrawCubeWiresV({0,0,0}, {100, 100, 100}, BLACK);
-        DrawCubeWiresV({0,0,0}, {200, 200, 200}, RED);
+        DrawCubeWiresV({0,0,0}, {100, 100, 100}, Fade(BLACK, 0.35f));
+        DrawCubeWiresV({0,0,0}, {200, 200, 200}, Fade(RED, 0.25f));
 
-        DrawPlane({0,-50,0}, {100, 100}, GRAY);
-        DrawPlane({0,-50,75}, {100, 50}, GRAY);
+        // full aquarium floor
+        DrawPlane({ 0,-50,0 }, { 100, 100 }, { 214, 196, 145, 255 });
+        DrawPlane({0,-50,75}, {100, 50}, { 200, 185, 140, 255 });
 
-        for (const Platform &platform : platforms) {
-            DrawCubeV(platform.position, platform.size, platform.color);
-            DrawCubeWiresV(platform.position, platform.size, BLACK);
+        // full aquarium glass walls
+        DrawCubeV({ 0.0f, -10.0f, -46.0f }, { 98.0f, 80.0f, 1.2f }, Fade(BLUE, 0.32f));
+        DrawCubeWiresV({ 0.0f, -10.0f, -46.0f }, { 98.0f, 80.0f, 1.2f }, Fade(DARKBLUE, 0.55f));
+
+        DrawCubeV({ -49.0f, -10.0f, 0.0f }, { 1.2f, 80.0f, 92.0f }, Fade(BLUE, 0.24f));
+        DrawCubeWiresV({ -49.0f, -10.0f, 0.0f }, { 1.2f, 80.0f, 92.0f }, Fade(DARKBLUE, 0.45f));
+
+        DrawCubeV({ 49.0f, -10.0f, 0.0f }, { 1.2f, 80.0f, 92.0f }, Fade(BLUE, 0.24f));
+        DrawCubeWiresV({ 49.0f, -10.0f, 0.0f }, { 1.2f, 80.0f, 92.0f }, Fade(DARKBLUE, 0.45f));
+
+        // coral and rocks
+        DrawSphere({ -32.0f, -48.0f, -22.0f }, 2.6f, PINK);
+        DrawSphere({ -28.0f, -47.5f, -19.0f }, 2.2f, ORANGE);
+        DrawSphere({ -36.0f, -47.8f, -16.0f }, 1.8f, PURPLE);
+        DrawSphere({ -18.0f, -48.2f, 12.0f }, 2.4f, { 90, 100, 110, 255 });
+        DrawSphere({ -13.0f, -48.5f, 15.0f }, 1.7f, { 80, 90, 100, 255 });
+
+        // seaweed
+        drawSeaweed({ -34.0f, -50.0f, -10.0f }, DARKGREEN);
+        drawSeaweed({ -25.0f, -50.0f, 8.0f }, GREEN);
+        drawSeaweed({ -15.0f, -50.0f, -28.0f }, DARKGREEN);
+        drawSeaweed({ 8.0f, -50.0f, 14.0f }, GREEN);
+        drawSeaweed({ 22.0f, -50.0f, -18.0f }, DARKGREEN);
+
+        // bubbles
+        drawBubbleColumn({ -31.0f, -48.0f, -12.0f }, 0.0f);
+        drawBubbleColumn({ -21.0f, -48.0f, 9.0f }, 1.4f);
+        drawBubbleColumn({ -12.0f, -48.0f, -25.0f }, 2.6f);
+        drawBubbleColumn({ 10.0f, -48.0f, 16.0f }, 3.2f);
+        drawBubbleColumn({ 24.0f, -48.0f, -10.0f }, 4.1f);
+
+        // fish and creatures
+        drawFish({ -28.0f, -18.0f, -24.0f }, ORANGE, 1.0f);
+        drawFish({ -18.0f, -12.0f, -5.0f }, GOLD, -1.0f);s
+        drawFish({ -34.0f, -6.0f, 12.0f }, SKYBLUE, 1.0f);
+        drawFish({ -10.0f, -22.0f, 24.0f }, LIME, -1.0f);
+
+        drawJellyfish({ -38.0f, -8.0f, -6.0f }, Fade(VIOLET, 0.9f));
+        drawJellyfish({ -22.0f, -2.0f, 18.0f }, Fade(PINK, 0.9f));
+
+        // turtl
+        DrawSphere({ 6.0f, -18.0f, 6.0f }, 1.6f, DARKGREEN);
+        DrawSphere({ 7.8f, -18.0f, 6.0f }, 0.8f, GREEN);
+        DrawCubeV({ 5.0f, -18.8f, 7.2f }, { 0.8f, 0.2f, 1.4f }, GREEN);
+        DrawCubeV({ 5.0f, -18.8f, 4.8f }, { 0.8f, 0.2f, 1.4f }, GREEN);
+        DrawCubeV({ 6.8f, -18.8f, 7.2f }, { 0.8f, 0.2f, 1.4f }, GREEN);
+        DrawCubeV({ 6.8f, -18.8f, 4.8f }, { 0.8f, 0.2f, 1.4f }, GREEN);
+
+        // extra fish
+        drawFish({ 6.0f, -10.0f, -18.0f }, RED, 1.0f);
+        drawFish({ 24.0f, -14.0f, 8.0f }, BLUE, -1.0f);
+        drawFish({ 30.0f, -6.0f, -28.0f }, YELLOW, 1.0f);
+
+        // extra jellyfish
+        drawJellyfish({ 12.0f, -4.0f, 18.0f }, Fade(SKYBLUE, 0.9f));
+        drawJellyfish({ 28.0f, -8.0f, -6.0f }, Fade(PINK, 0.85f));
+
+        // little school of fish
+        drawFish({ -4.0f, -16.0f, 14.0f }, ORANGE, 1.0f);
+        drawFish({ 0.0f, -14.5f, 16.0f }, GOLD, 1.0f);
+        drawFish({ 4.0f, -13.0f, 18.0f }, SKYBLUE, 1.0f);
+
+        // decorative crab on the sand
+        DrawSphere({ 20.0f, -48.3f, -10.0f }, 1.0f, RED);
+        DrawSphere({ 19.0f, -48.5f, -10.8f }, 0.25f, RED);
+        DrawSphere({ 21.0f, -48.5f, -10.8f }, 0.25f, RED);
+        DrawCubeV({ 18.5f, -48.6f, -9.2f }, { 0.8f, 0.15f, 1.0f }, RED);
+        DrawCubeV({ 21.5f, -48.6f, -9.2f }, { 0.8f, 0.15f, 1.0f }, RED);
+
+        for (int i = 0; i < (int)platforms.size(); i++) {
+            const Platform &platform = platforms[i];
+
+            if (i == 1) {
+                drawStingrayPlatform(platform.position);
+            }
+            else {
+                DrawCubeV(platform.position, platform.size, platform.color);
+                DrawCubeWiresV(platform.position, platform.size, BLACK);
+            }
         }
+
+        DrawCubeV({ 12.0f, computerPos.y + 0.2f, -30.0f }, { 5.0f, 0.2f, 3.0f }, Fade(SKYBLUE, 0.25f));
 
         DrawModelEx(
             bugModel,

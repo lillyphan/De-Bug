@@ -5,16 +5,19 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
 
 #include "headers/LevelLoader.h"
 #include "headers/ComputerTerminal.h"
 
 using namespace std;
 
-float PLAYER_RADIUS = 2.0f; // Made variable so it can adapt to the bug model's size
+float PLAYER_RADIUS = 2.0f;
 const float FLOOR_Y = -50.0f;
 
-// Bound position within specific min/max coordinates
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
 void boundPos(Vector3 &var,
               float xMin, float xMax,
               float yMin, float yMax,
@@ -38,20 +41,83 @@ bool isRoomShellBox(const BoxObject& box) {
     return (box.size.x >= 90.0f || box.size.y >= 90.0f || box.size.z >= 90.0f);
 }
 
+bool isCollidableBox(const BoxObject& box) {
+    if (isRoomShellBox(box)) return false;
+    return (box.size.x >= 0.5f && box.size.y >= 0.1f && box.size.z >= 0.5f);
+}
+
+BoundingBox getStingrayPlatformBounds(const StingrayPlatformObject& s) {
+    return makeBoundingBox(s.position, { 9.0f, 1.2f, 8.0f });
+}
+
+BoundingBox getSphereBounds(const SphereObject& s) {
+    Vector3 size = { s.radius * 2.0f, s.radius * 2.0f, s.radius * 2.0f };
+    return makeBoundingBox(s.position, size);
+}
+
+BoundingBox getCylinderExBounds(const CylinderExObject& c) {
+    float radius = std::max(c.startRadius, c.endRadius);
+
+    float minX = std::min(c.startPos.x, c.endPos.x) - radius;
+    float maxX = std::max(c.startPos.x, c.endPos.x) + radius;
+
+    float minY = std::min(c.startPos.y, c.endPos.y) - radius;
+    float maxY = std::max(c.startPos.y, c.endPos.y) + radius;
+
+    float minZ = std::min(c.startPos.z, c.endPos.z) - radius;
+    float maxZ = std::max(c.startPos.z, c.endPos.z) + radius;
+
+    BoundingBox box;
+    box.min = { minX, minY, minZ };
+    box.max = { maxX, maxY, maxZ };
+    return box;
+}
+
 vector<BoundingBox> buildPlatformBounds(const LevelData& level) {
     vector<BoundingBox> bounds;
+
     for (const BoxObject& box : level.boxes) {
-        if (!isRoomShellBox(box)) {
+        if (isCollidableBox(box)) {
             bounds.push_back(makeBoundingBox(box.position, box.size));
         }
     }
+
+    for (const StingrayPlatformObject& s : level.stingrayPlatforms) {
+        bounds.push_back(getStingrayPlatformBounds(s));
+    }
+
     return bounds;
 }
 
 vector<BoundingBox> buildSolidBounds(const LevelData& level) {
-    vector<BoundingBox> solids = buildPlatformBounds(level);
+    vector<BoundingBox> solids;
+
+    // Collidable boxes
+    for (const BoxObject& box : level.boxes) {
+        if (isCollidableBox(box)) {
+            solids.push_back(makeBoundingBox(box.position, box.size));
+        }
+    }
+
+    // Stingray platforms
+    for (const StingrayPlatformObject& s : level.stingrayPlatforms) {
+        solids.push_back(getStingrayPlatformBounds(s));
+    }
+
+    // Collidable spheres
+    for (const SphereObject& s : level.spheres) {
+        solids.push_back(getSphereBounds(s));
+    }
+
+    // Collidable cylinders
+    for (const CylinderExObject& c : level.cylinders) {
+        solids.push_back(getCylinderExBounds(c));
+    }
+
+    // Computer and door
     solids.push_back(getComputerBounds(level));
     solids.push_back(getDoorBounds(level));
+
     return solids;
 }
 
@@ -77,8 +143,10 @@ bool collidesWithSolidSideways(Vector3 pos, const vector<BoundingBox>& solidBoun
         if (isStandingOnTopOf(playerBox, box)) {
             continue;
         }
+
         return true;
     }
+
     return false;
 }
 
@@ -104,12 +172,96 @@ void showLevelTitle(const std::string& name) {
     }
 }
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Decorative drawing
+// -----------------------------------------------------------------------------
+void drawFish(Vector3 pos, Color bodyColor, float facing) {
+    DrawSphere(pos, 1.2f, bodyColor);
+    DrawSphere({ pos.x + 0.9f * facing, pos.y + 0.15f, pos.z + 0.9f }, 0.12f, BLACK);
+
+    rlPushMatrix();
+    rlTranslatef(pos.x - 1.5f * facing, pos.y, pos.z);
+    rlRotatef((facing > 0.0f) ? 25.0f : -25.0f, 0.0f, 1.0f, 0.0f);
+    DrawCubeV({ 0.0f, 0.0f, 0.0f }, { 1.2f, 1.0f, 0.4f }, bodyColor);
+    rlPopMatrix();
+
+    DrawCubeV({ pos.x - 0.2f * facing, pos.y + 0.7f, pos.z }, { 0.9f, 0.25f, 0.5f }, bodyColor);
+}
+
+void drawJellyfish(Vector3 pos, Color bodyColor) {
+    DrawSphere(pos, 1.3f, bodyColor);
+
+    for (int i = -1; i <= 1; i++) {
+        float x = pos.x + i * 0.5f;
+        DrawCylinderEx(
+            { x, pos.y - 0.6f, pos.z + 0.1f * i },
+            { x + 0.2f * i, pos.y - 3.2f, pos.z + 0.15f * i },
+            0.08f,
+            0.05f,
+            6,
+            Fade(bodyColor, 0.8f)
+        );
+    }
+}
+
+void drawSeaweed(Vector3 basePos, Color color) {
+    DrawCylinderEx(
+        { basePos.x, basePos.y, basePos.z },
+        { basePos.x + 0.4f, basePos.y + 4.5f, basePos.z + 0.2f },
+        0.30f,
+        0.18f,
+        6,
+        color
+    );
+
+    DrawCylinderEx(
+        { basePos.x + 0.6f, basePos.y, basePos.z - 0.3f },
+        { basePos.x + 1.0f, basePos.y + 3.6f, basePos.z + 0.5f },
+        0.24f,
+        0.14f,
+        6,
+        color
+    );
+}
+
+void drawBubbleColumn(Vector3 basePos, float timeOffset) {
+    for (int i = 0; i < 5; i++) {
+        float rise = fmodf((float)GetTime() * 1.2f + timeOffset + i * 1.4f, 8.0f);
+        Vector3 bubblePos = {
+            basePos.x + sinf((float)GetTime() + i) * 0.15f,
+            basePos.y + rise,
+            basePos.z + cosf((float)GetTime() + i) * 0.15f
+        };
+        DrawSphere(bubblePos, 0.22f + 0.03f * i, Fade(SKYBLUE, 0.65f));
+    }
+}
+
+void drawStingrayPlatform(Vector3 pos) {
+    Color rayColor = { 85, 105, 120, 255 };
+
+    DrawSphere({ pos.x, pos.y, pos.z }, 3.4f, rayColor);
+    DrawSphere({ pos.x - 2.4f, pos.y, pos.z }, 2.2f, rayColor);
+    DrawSphere({ pos.x + 2.4f, pos.y, pos.z }, 2.2f, rayColor);
+
+    DrawCubeV({ pos.x, pos.y + 0.4f, pos.z }, { 9.0f, 1.2f, 8.0f }, rayColor);
+
+    DrawCylinderEx(
+        { pos.x, pos.y - 0.2f, pos.z - 4.0f },
+        { pos.x, pos.y - 0.6f, pos.z - 11.0f },
+        0.18f,
+        0.05f,
+        6,
+        rayColor
+    );
+
+    DrawSphere({ pos.x - 1.0f, pos.y + 1.1f, pos.z + 1.2f }, 0.18f, BLACK);
+    DrawSphere({ pos.x + 1.0f, pos.y + 1.1f, pos.z + 1.2f }, 0.18f, BLACK);
+}
+
+// -----------------------------------------------------------------------------
+// Main
+// -----------------------------------------------------------------------------
 int main(void) {
-    // Initialization
-    //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 700;
     const int fps = 60;
@@ -124,7 +276,6 @@ int main(void) {
     Sound doorSound     = LoadSound("src/assets/sounds/door.mp3");
     Sound key     = LoadSound("src/assets/sounds/key1.mp3");
 
-    // Load Level Data
     LevelData level;
     if (!loadLevelFile("src/assets/rooms/room1.txt", level)) {
         cout << "Failed to load level file.\n";
@@ -132,34 +283,26 @@ int main(void) {
         return 1;
     }
 
-    // Define the camera to look into our 3d world
     Camera3D camera = { 0 };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f }; // Camera up vector (rotation towards target)
-    camera.fovy = 60.0f; // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
-    Vector3 camOffset = { 0.0f, 10.0f, 18.0f }; // Delta pos from bug
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    camera.fovy = 60.0f;
+    camera.projection = CAMERA_PERSPECTIVE;
+    Vector3 camOffset = { 0.0f, 10.0f, 18.0f };
 
-    // Load Models (Computer & Screen)
     Model computerModel = LoadModel("src/renderer/objects/computer.obj");
     Model computerScreenModel = LoadModel("src/renderer/objects/computer-screen.obj");
-    float computerRot = 180;
+    float computerRot = 180.0f;
 
-    // Load Bug Model
     Model bugModel = LoadModel("src/renderer/objects/de-bug.obj");
     BoundingBox bugBounds = GetMeshBoundingBox(bugModel.meshes[0]);
-    float bugSize[3] = {
-        bugBounds.max.x - bugBounds.min.x,
-        bugBounds.max.y - bugBounds.min.y,
-        bugBounds.max.z - bugBounds.min.z
-    }; // x, y, z
-    PLAYER_RADIUS = bugSize[1] / 2.0f; // Update collision radius to match visual model height
+    float bugSizeY = bugBounds.max.y - bugBounds.min.y;
+    PLAYER_RADIUS = bugSizeY / 2.0f;
 
-    Vector3 bugPos = level.playerStart; // Spawn point
-    float bugRot = 0;
+    Vector3 bugPos = level.playerStart;
+    float bugRot = 0.0f;
 
-    // Movement & Physics variables
-    float moveSpeed = 0.15f * (60.0f / (float)fps); // Division is to have same speed at any fps
-    float diagMoveSpeed = sqrt(0.5f) * moveSpeed; // Diagonal normalization
+    float moveSpeed = 0.15f * (60.0f / (float)fps);
+    float diagMoveSpeed = sqrt(0.5f) * moveSpeed;
 
     float verticalVelocity = 0.0f;
     const float gravity = 0.015f * (60.0f / (float)fps);
@@ -167,20 +310,14 @@ int main(void) {
     bool onGround = true;
 
     string collisionText = "Colliding with: none";
+    string statusText = "";
+
     ComputerTerminal terminal;
 
-    SetTargetFPS(fps); // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+    SetTargetFPS(fps);
 
-    // --- ASCII splash screen ---
-    const char* title = 
-        "  ____  U _____ u  ____     _   _    ____   \n"
-        " |  _\"\\  \\| ___\"|/ |  _\"\\  | | | |  / __\"| \n"
-        "/| | | |  |  _|\"  /| | | | | |_| | <\\___ \\ \n"
-        "U| |_| |\\ | |___  U| |_| |\\|_   _|  u___) |\n"
-        " |____/ u |_____|  |____/ u  |_|    |____/ u\n"
-        "  |||_   <<   >>    |||_  .-,//|(_   )(  (( \n"
-        " (__)_) (__) (__)  (__)_)  \\_)-'_/  (__)  ) \n";
+    const char* title =
+        "$$$$$$$\\\\ $$$$$$$$\\\\$$$$$$$\\\\  $$\\\\  $$\\\\  $$$$$$\\\\\n$$  __$$\\\\$$  _____|$$  __$$\\\\ $$ |  $$ |$$  __ $$\\\\\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ /  \\\\__|\n$$ |  $$ |$$$$$\\\\   $$$$$$$\\\\ |$$ |  $$ |$$ |  $$$$\\\\\n$$ |  $$ |$$  __|   $$  __$$\\\\ $$ |  $$ |$$ |  \\\\_$$ |\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ |     $$ |\n$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$   |\n\\\\_______/ \\\\________|\\\\______/   \\\\______/  \\\\______/";
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_ENTER)){
@@ -191,36 +328,51 @@ int main(void) {
         BeginDrawing();
             ClearBackground(BLACK);
 
-            // Draw ASCII title
-            int lineHeight = 18;
-            int fontSize   = 16;
-            int y          = GetScreenHeight()/2 - 80;
+            int lineHeight    = 18;
+            int titleFontSize = 16;
 
-            // Split and draw line by line so we can center each one
-            const char* ptr = title;
-            char lineBuf[128];
-            int lineIndex = 0;
-            while (*ptr) {
-                int len = 0;
-                while (*ptr && *ptr != '\n') {
-                    lineBuf[len++] = *ptr++;
+            // Emulate a monospaced font by forcing a fixed width based on the '$' character
+            int fixedCharWidth = MeasureText("/", titleFontSize);
+
+            // Calculate max columns to perfectly center the entire block on the screen
+            int maxCols = 0;
+            int currentCols = 0;
+            for (const char* p = title; *p != '\0'; p++) {
+                if (*p == '\n') {
+                    if (currentCols > maxCols) maxCols = currentCols;
+                    currentCols = 0;
+                } else {
+                    currentCols++;
                 }
-                lineBuf[len] = '\0';
-                if (*ptr == '\n') ptr++;
+            }
+            if (currentCols > maxCols) maxCols = currentCols;
 
-                int x = GetScreenWidth()/2 - MeasureText(lineBuf, fontSize)/2;
-                DrawText(lineBuf, x, y + lineIndex * lineHeight, fontSize, GREEN);
-                lineIndex++;
+            int startX = GetScreenWidth() / 2 - (maxCols * fixedCharWidth) / 2;
+            int y = GetScreenHeight() / 2 - 80;
+
+            // Draw character by character on our rigid grid
+            int row = 0;
+            int col = 0;
+            for (const char* p = title; *p != '\0'; p++) {
+                if (*p == '\n') {
+                    row++;
+                    col = 0;
+                } else {
+                    // Only draw visible characters; we let the space just advance the column
+                    if (*p != ' ') {
+                        char cStr[2] = { *p, '\0' };
+                        DrawText(cStr, startX + col * fixedCharWidth, y + row * lineHeight, titleFontSize, GREEN);
+                    }
+                    col++;
+                }
             }
 
-            // Blinking "press enter to play"
             if ((int)(GetTime() * 2) % 2 == 0) {
                 DrawText("press enter to play",
-                    GetScreenWidth()/2 - MeasureText("press enter to play", 18)/2,
-                    GetScreenHeight()/2 + 60,
+                    GetScreenWidth() / 2 - MeasureText("press enter to play", 18) / 2,
+                    GetScreenHeight() / 2 + 80,
                     18, DARKGREEN);
             }
-
         EndDrawing();
     }
 
@@ -228,17 +380,13 @@ int main(void) {
 
     int currentLevel = 1;
 
-    // Main game loop
-    while (!WindowShouldClose()) { // Detect window close button or ESC key
-        // Update
-        //----------------------------------------------------------------------------------
+    while (!WindowShouldClose()) {
+        statusText.clear();
+
         vector<BoundingBox> platformBounds = buildPlatformBounds(level);
         vector<BoundingBox> solidBounds = buildSolidBounds(level);
         BoundingBox computerBox = getComputerBounds(level);
         BoundingBox doorBox = getDoorBounds(level);
-
-        BoundingBox playerBoxAtStart = makePlayerBox(bugPos);
-        bool touchingComputer = isTouchingBox(playerBoxAtStart, computerBox);
 
         if (terminal.isOpen()) {
             terminal.update();
@@ -259,21 +407,18 @@ int main(void) {
                 - (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed * 0.5f)
                 + (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed);
 
-            // Check if moving diagonal
             if ((keyW || keyS) && (keyA || keyD)) {
                 currMoveSpeed = diagMoveSpeed
                     - (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed * 0.5f)
                     + (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed);
             }
 
-            // Jumping Logic
             if (onGround && IsKeyPressed(KEY_SPACE)) {
                 verticalVelocity = jumpStrength;
                 PlaySound(jumpSound);
                 onGround = false;
             }
 
-            // Z movement Logic
             Vector3 zTestPos = bugPos;
             if (keyW) zTestPos.z -= currMoveSpeed;
             if (keyS) zTestPos.z += currMoveSpeed;
@@ -282,7 +427,6 @@ int main(void) {
                 bugPos.z = zTestPos.z;
             }
 
-            // X movement Logic
             Vector3 xTestPos = bugPos;
             if (keyA) xTestPos.x -= currMoveSpeed;
             if (keyD) xTestPos.x += currMoveSpeed;
@@ -291,29 +435,24 @@ int main(void) {
                 bugPos.x = xTestPos.x;
             }
 
-            // Rotation Logic
-            // We check two-key combinations first to ensure "ONLY" those are active
             if (keyW && keyA) {
-                bugRot = 45;
+                bugRot = 45.0f;
             } else if (keyW && keyD) {
-                bugRot = 315;
+                bugRot = 315.0f;
             } else if (keyS && keyA) {
-                bugRot = 135;
+                bugRot = 135.0f;
             } else if (keyS && keyD) {
-                bugRot = 225;
-            }
-            // If no two-key combo is happening, check for single keys
-            else if (keyW) {
-                bugRot = 0;
+                bugRot = 225.0f;
+            } else if (keyW) {
+                bugRot = 0.0f;
             } else if (keyA) {
-                bugRot = 90;
+                bugRot = 90.0f;
             } else if (keyS) {
-                bugRot = 180;
+                bugRot = 180.0f;
             } else if (keyD) {
-                bugRot = 270;
+                bugRot = 270.0f;
             }
 
-            // Vertical movement Logic
             verticalVelocity -= gravity;
             float proposedY = bugPos.y + verticalVelocity;
 
@@ -342,7 +481,7 @@ int main(void) {
 
                     if (verticalVelocity > 0.0f &&
                         oldTop <= boxBottom + 0.25f &&
-                        newTop >= boxBottom - 0.25f) {
+                        newTop >= boxBottom - PLAYER_RADIUS) {
                         bugPos.y = boxBottom - PLAYER_RADIUS;
                         verticalVelocity = 0.0f;
                         landedOnSomething = true;
@@ -363,7 +502,6 @@ int main(void) {
                 onGround = true;
             }
 
-            // Bound the bug
             boundPos(bugPos, -48.0f, 48.0f, FLOOR_Y + PLAYER_RADIUS, 80.0f, -48.0f, 78.0f);
 
             BoundingBox playerBox = makePlayerBox(bugPos);
@@ -371,8 +509,7 @@ int main(void) {
             bool hitDoor = isTouchingBox(playerBox, doorBox);
             bool hitPlatform = false;
 
-            // Check if puzzle was just solved — unlock the door
-            std::string roomId = "challenge" + std::to_string(currentLevel);
+            string roomId = "challenge" + to_string(currentLevel);
             Room* room = terminal.getGameState().getRoom(roomId);
             bool doorUnlocked = room && room->doorUnlocked;
 
@@ -381,19 +518,16 @@ int main(void) {
                 PlaySound(doorSound);
                 std::string nextFile = "src/assets/rooms/room" + std::to_string(currentLevel) + ".txt";
                 if (!loadLevelFile(nextFile, level)) {
-                    // no more levels, win screen!!
+                    statusText = "You win!";
+                    currentLevel--;
                 } else {
                     showLevelTitle(level.name);
-                    // reset player position to near the computer
-                    // bugPos = {
-                    //     level.computer.position.x,
-                    //     FLOOR_Y + PLAYER_RADIUS,
-                    //     level.computer.position.z + 12.0f
-                    // };
-                    // terminal.open("challenge" + std::to_string(currentLevel));
+                    bugPos = level.playerStart;
+                    verticalVelocity = 0.0f;
+                    onGround = false;
                 }
             } else if (hitDoor && !doorUnlocked) {
-                DrawText("Door is locked.", 10, 110, 20, DARKGREEN);
+                statusText = "Door is locked.";
             }
 
             for (const BoundingBox& box : platformBounds) {
@@ -421,21 +555,16 @@ int main(void) {
             }
         }
 
-        // Camera to follow bug
         Vector3 desiredCamPos = {
             bugPos.x + camOffset.x,
             bugPos.y + camOffset.y,
             bugPos.z + camOffset.z
         };
 
-        // Bound the cam to box limits
         boundPos(desiredCamPos, -45.0f, 45.0f, -40.0f, 45.0f, -30.0f, 78.0f);
         camera.position = desiredCamPos;
         camera.target = { bugPos.x, bugPos.y + 1.0f, bugPos.z };
 
-        // --------------------------
-        // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
         if (terminal.isOpen()) {
@@ -446,7 +575,10 @@ int main(void) {
 
             BeginMode3D(camera);
 
-            // Draw level architecture
+            for (const PlaneObject& plane : level.planes) {
+                DrawPlane(plane.position, plane.size, plane.color);
+            }
+
             for (const BoxObject& box : level.boxes) {
                 if (isRoomShellBox(box)) {
                     DrawCubeWiresV(box.position, box.size, box.color);
@@ -456,50 +588,95 @@ int main(void) {
                 }
             }
 
-            for (const PlaneObject& plane : level.planes) {
-                DrawPlane(plane.position, plane.size, plane.color);
+            for (const CylinderExObject& cyl : level.cylinders) {
+                DrawCylinderEx(
+                    cyl.startPos,
+                    cyl.endPos,
+                    cyl.startRadius,
+                    cyl.endRadius,
+                    cyl.sides,
+                    cyl.color
+                );
             }
 
-            // Draw objects with Default Raylib Shader
-            DrawModelEx(computerModel, level.computer.position, (Vector3){ 0.0f, 1.0f, 0.0f }, computerRot, (Vector3){ 1.0f, 1.0f, 1.0f }, WHITE);
-            DrawModelEx(computerScreenModel, level.computer.position, (Vector3){ 0.0f, 1.0f, 0.0f }, computerRot, (Vector3){ 1.0f, 1.0f, 1.0f }, GREEN);
+            for (const SphereObject& s : level.spheres) {
+                DrawSphere(s.position, s.radius, s.color);
+            }
 
-            DrawCubeV(level.door.position, DOOR_SIZE, BLUE);
-            DrawCubeWiresV(level.door.position, DOOR_SIZE, BLACK);
+            for (const SeaweedObject& s : level.seaweed) {
+                drawSeaweed(s.basePos, s.color);
+            }
 
-            // Draw bug model replacing the physics sphere
-            DrawModelEx(bugModel, bugPos, (Vector3){ 0.0f, 1.0f, 0.0f }, bugRot, (Vector3){ 1.0f, 1.0f, 1.0f }, BROWN);
+            for (const BubbleColumnObject& b : level.bubbleColumns) {
+                drawBubbleColumn(b.basePos, b.timeOffset);
+            }
+
+            for (const FishObject& f : level.fish) {
+                drawFish(f.position, f.color, f.facing);
+            }
+
+            for (const JellyfishObject& j : level.jellyfish) {
+                drawJellyfish(j.position, j.color);
+            }
+
+            for (const StingrayPlatformObject& s : level.stingrayPlatforms) {
+                drawStingrayPlatform(s.position);
+            }
+
+            DrawModelEx(
+                computerModel,
+                level.computer.position,
+                (Vector3){ 0.0f, 1.0f, 0.0f },
+                computerRot,
+                (Vector3){ 1.0f, 1.0f, 1.0f },
+                WHITE
+            );
+
+            DrawModelEx(
+                computerScreenModel,
+                level.computer.position,
+                (Vector3){ 0.0f, 1.0f, 0.0f },
+                computerRot,
+                (Vector3){ 1.0f, 1.0f, 1.0f },
+                GREEN
+            );
+
+            DrawCubeV(level.door.position, level.door.size, BLUE);
+            DrawCubeWiresV(level.door.position, level.door.size, BLACK);
+
+            DrawModelEx(
+                bugModel,
+                bugPos,
+                (Vector3){ 0.0f, 1.0f, 0.0f },
+                bugRot,
+                (Vector3){ 1.0f, 1.0f, 1.0f },
+                BROWN
+            );
 
             EndMode3D();
 
-            std::string roomId = "challenge" + std::to_string(currentLevel);
-            Room* room = terminal.getGameState().getRoom(roomId);
-
-            // Draw UI HUD
             DrawFPS(10, 10);
             DrawText(collisionText.c_str(), 10, 35, 20, BLACK);
-            if (roomId == "challenge1")
-            DrawText("WASD move | SPACE jump | SHIFT sprint | CTRL sneak", 20, 655, 20, BLACK);
             DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, BLACK);
+            DrawText("WASD move | SPACE jump | E use computer", 10, 85, 20, BLACK);
+
+            if (!statusText.empty()) {
+                DrawText(statusText.c_str(), 10, 110, 20, DARKGREEN);
+            }
 
             BoundingBox playerBox = makePlayerBox(bugPos);
             if (isTouchingBox(playerBox, computerBox)) {
-                DrawText("Press E to use computer", 10, 110, 20, DARKGREEN);
+                DrawText("Press E to use computer", 10, 135, 20, DARKGREEN);
             }
         }
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
     UnloadModel(computerModel);
     UnloadModel(computerScreenModel);
     UnloadModel(bugModel);
 
-    CloseWindow(); // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
+    CloseWindow();
     return 0;
 }
