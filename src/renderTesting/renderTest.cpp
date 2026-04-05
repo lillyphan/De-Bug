@@ -150,14 +150,7 @@ int main(void)
     // Splash screen
     // -------------------------------------------------------
     const char* title =
-        "    $$$$$$$\\  $$$$$$$$\\ $$$$$$$\\  $$\\   $$\\  $$$$$$\\  \n"
-        "    $$  __$$\\ $$  _____|$$  __$$\\ $$ |  $$ |$$  __$$\\ \n"
-        "    $$ |  $$ |$$ |      $$ |  $$ |$$ |  $$ |$$ /  \\__|\n"
-        "    $$ |  $$ |$$$$$\\    $$$$$$$\\ |$$ |  $$ |$$ |$$$$\\ \n"
-        "    $$ |  $$ |$$  __|   $$  __$$\\ $$ |  $$ |$$ |\\_$$ |\n"
-        "    $$ |  $$ |$$ |      $$ |  $$ |$$ |  $$ |$$ |  $$ |\n"
-        "    $$$$$$$  |$$$$$$$$\\ $$$$$$$  |\\$$$$$$  |\\$$$$$$  |\n"
-        "    \\_______/ \\________|\\______/   \\______/  \\______/ \n";
+        "$$$$$$$\\\\ $$$$$$$$\\\\$$$$$$$\\\\  $$\\\\  $$\\\\  $$$$$$\\\\\n$$  __$$\\\\$$  _____|$$  __$$\\\\ $$ |  $$ |$$  __ $$\\\\\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ /  \\\\__|\n$$ |  $$ |$$$$$\\\\   $$$$$$$\\\\ |$$ |  $$ |$$ |  $$$$\\\\\n$$ |  $$ |$$  __|   $$  __$$\\\\ $$ |  $$ |$$ |  \\\\_$$ |\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ |     $$ |\n$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$   |\n\\\\_______/ \\\\________|\\\\______/   \\\\______/  \\\\______/";
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_ENTER)) break;
@@ -167,27 +160,47 @@ int main(void)
 
             int lineHeight    = 18;
             int titleFontSize = 16;
-            int y = GetScreenHeight()/2 - 80;
 
-            const char* ptr = title;
-            char lineBuf[256];
-            int lineIndex = 0;
-            while (*ptr) {
-                int len = 0;
-                while (*ptr && *ptr != '\n' && len < 255)
-                    lineBuf[len++] = *ptr++;
-                lineBuf[len] = '\0';
-                if (*ptr == '\n') ptr++;
+            // Emulate a monospaced font by forcing a fixed width based on the '$' character
+            int fixedCharWidth = MeasureText("/", titleFontSize);
 
-                int x = GetScreenWidth()/2 - MeasureText(lineBuf, titleFontSize)/2;
-                DrawText(lineBuf, x, y + lineIndex * lineHeight, titleFontSize, GREEN);
-                lineIndex++;
+            // Calculate max columns to perfectly center the entire block on the screen
+            int maxCols = 0;
+            int currentCols = 0;
+            for (const char* p = title; *p != '\0'; p++) {
+                if (*p == '\n') {
+                    if (currentCols > maxCols) maxCols = currentCols;
+                    currentCols = 0;
+                } else {
+                    currentCols++;
+                }
+            }
+            if (currentCols > maxCols) maxCols = currentCols;
+
+            int startX = GetScreenWidth() / 2 - (maxCols * fixedCharWidth) / 2;
+            int y = GetScreenHeight() / 2 - 80;
+
+            // Draw character by character on our rigid grid
+            int row = 0;
+            int col = 0;
+            for (const char* p = title; *p != '\0'; p++) {
+                if (*p == '\n') {
+                    row++;
+                    col = 0;
+                } else {
+                    // Only draw visible characters; we let the space just advance the column
+                    if (*p != ' ') {
+                        char cStr[2] = { *p, '\0' };
+                        DrawText(cStr, startX + col * fixedCharWidth, y + row * lineHeight, titleFontSize, GREEN);
+                    }
+                    col++;
+                }
             }
 
             if ((int)(GetTime() * 2) % 2 == 0) {
                 DrawText("press enter to play",
-                    GetScreenWidth()/2 - MeasureText("press enter to play", 18)/2,
-                    GetScreenHeight()/2 + 80,
+                    GetScreenWidth() / 2 - MeasureText("press enter to play", 18) / 2,
+                    GetScreenHeight() / 2 + 80,
                     18, DARKGREEN);
             }
         EndDrawing();
@@ -198,6 +211,11 @@ int main(void)
     // -------------------------------------------------------
     while (!WindowShouldClose())
     {
+        UnloadRenderTexture(target);
+        target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+        float res[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+        SetShaderValue(asciiShader, resolutionLoc, res, SHADER_UNIFORM_VEC2);
+
         // --- Update ---
         float currBugSpeed = bugSpeed
             - (IsKeyDown(KEY_LEFT_SHIFT)   * bugSpeed * 0.5f)
