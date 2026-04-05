@@ -456,11 +456,15 @@ int main(void) {
 
             EndMode3D();
 
+            std::string roomId = "challenge" + std::to_string(currentLevel);
+            Room* room = terminal.getGameState().getRoom(roomId);
+
             // Draw UI HUD
             DrawFPS(10, 10);
             DrawText(collisionText.c_str(), 10, 35, 20, BLACK);
+            if (roomId == "challenge1")
+            DrawText("WASD move | SPACE jump | SHIFT sprint | CTRL sneak", 20, 655, 20, BLACK);
             DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, BLACK);
-            DrawText("WASD move | SPACE jump | E use computer", 10, 85, 20, BLACK);
 
             BoundingBox playerBox = makePlayerBox(bugPos);
             if (isTouchingBox(playerBox, computerBox)) {
