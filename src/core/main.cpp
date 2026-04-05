@@ -525,6 +525,19 @@ int main(void) {
 
         vector<BoundingBox> platformBounds = buildPlatformBounds(level);
         vector<BoundingBox> solidBounds = buildSolidBounds(level);
+
+        if (bridgeSpawned && !level.bridgeBoxes.empty()) {
+            float now = (float)GetTime();
+            float t = (now - bridgeSpawnTime) / BRIDGE_RISE_DURATION;
+            if (t > 1.0f) t = 1.0f;
+            float ease = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
+            for (const auto& b : level.bridgeBoxes) {
+                float currentY = (b.position.y - 20.0f) + 20.0f * ease;
+                solidBounds.push_back(makeBoundingBox(
+                    { b.position.x, currentY, b.position.z }, b.size));
+            }
+        }
+
         BoundingBox computerBox = getComputerBounds(level);
         BoundingBox doorBox = getDoorBounds(level);
 
@@ -668,6 +681,12 @@ int main(void) {
                 screenColor = RED;
             }
 
+            // Spawn bridge when puzzle is solved
+            if (doorUnlocked && !bridgeSpawned && !level.bridgeBoxes.empty()) {
+                bridgeSpawned = true;
+                bridgeSpawnTime = (float)GetTime();
+            }
+
             if (hitDoor && doorUnlocked) {
                 currentLevel++;
                 PlaySound(doorSound);
@@ -679,6 +698,7 @@ int main(void) {
                     bugPos = level.playerStart;
                     verticalVelocity = 0.0f;
                     onGround = false;
+                    bridgeSpawned = false;
                 }
             } else if (hitDoor && !doorUnlocked) {
                 statusText = "Door is locked.";
