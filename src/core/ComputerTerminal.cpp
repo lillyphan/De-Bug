@@ -32,7 +32,7 @@ void ComputerTerminal::rebuildPuzzleFiles() {
 void ComputerTerminal::open(const std::string& roomId) {
     PlayMusicStream(computerSound);
     gameState.activeRoomId = roomId;
-    gameState.player.currentRoomId = roomId;
+    // gameState.player.currentRoomId = roomId;
 
     Room* room = gameState.currentRoom();
     if (room) {
