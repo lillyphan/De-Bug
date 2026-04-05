@@ -2,7 +2,7 @@
 #include "raylib.h"
 
 #define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
+#include "../../raygui/raygui.h"
 
 Dropdwn::Dropdwn(PuzzleFile* file)
     : file(file), finished(false)
