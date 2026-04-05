@@ -122,7 +122,10 @@ CommandResult CommandParser::handleRun(const std::string &playerCode, const std:
     }
 
     //passed all checks, write player input into PuzzleState
-    ps.playerCode = playerCode;
+    // only set playerCode from editorCode if it's not empty
+    if (!playerCode.empty())
+        ps.playerCode = playerCode;
+
     //loops thorugh all the dropdown slections  
     for (int i = 0; i < (int)dropdownSelections.size() &&
                     i < (int)ps.dropdowns.size(); i++) {
@@ -136,7 +139,7 @@ CommandResult CommandParser::handleRun(const std::string &playerCode, const std:
             }
         }
     }
-    
+
     //pass to the puzzleEngine to validate the result
     PuzzleEngine engine(m_state); //puzzle engine according to the room (state)
     bool correct = engine.validate(ps, ps.type);

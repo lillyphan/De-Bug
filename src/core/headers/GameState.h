@@ -138,7 +138,9 @@ struct GameState {
         if (!room) return;
 
         PuzzleState& ps = room->puzzle;
-        ps.playerCode = submittedCode;
+        
+        if (!submittedCode.empty())
+            room->puzzle.playerCode = submittedCode;
     }
 
     // ****************** Navigation ******************

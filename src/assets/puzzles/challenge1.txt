@@ -3,7 +3,7 @@ door
 ls lets you see available files and nano <file name> lets you edit files!
 ls nano help hint run exit
 dp
-4
+3
 while(true)
     if openDoor:
        _
