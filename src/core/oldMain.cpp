@@ -1,97 +1,46 @@
-#include "raylib.h"
+#include <iostream>
 #include "headers/GameState.h"
-#include "headers/PuzzleType.h"
 #include "headers/PuzzleLoader.h"
-#include "terminal/PuzzleFile.h"
-#include "headers/CommandParser.h"
-#include "terminal/CommandPrompt.h"
-#include "terminal/Dropdwn.h"
-#include "terminal/Typing.h"
-#include <string>
-#include <vector>
-#include <memory>
+#include "headers/PuzzleType.h"
 
-int main()
-{
-    InitWindow(1000, 700, "Puzzle Room");
-    SetTargetFPS(60);
-
-    // --- Load everything into GameState ---
+int main() {
     GameState gameState;
-    Font terminalFont = LoadFont("src/assets/fonts/terminal.ttf");
-    PuzzleLoader::loadAll(gameState, "src/assets/rooms", "src/assets/commands.txt");
-    gameState.activeRoomId        = "room_01";
-    gameState.player.currentRoomId = "room_01";
+    PuzzleLoader::loadAll(gameState, "src/assets/puzzles", "src/assets/commands.txt");
 
-    // --- Build PuzzleFiles from the active room's PuzzleState ---
-    // These are what Dropdwn and Typing read from
-    std::vector<PuzzleFile> puzzleFiles;
-    Room* room = gameState.currentRoom();
-    if (room) {
-        for (auto& filename : room->puzzle.filenames)
-            puzzleFiles.push_back(PuzzleFile::fromPuzzleState(room->puzzle, filename));
-    }
+    std::cout << "=== Commands ===\n";
+    for (auto& [name, desc] : gameState.commandDescriptions)
+        std::cout << "  " << name << ": " << desc << "\n";
 
-    // --- Set puzzle to active so CommandParser won't reject submissions ---
-    if (room) room->puzzle.status = PuzzleStatus::Active;
+    std::cout << "\n=== Rooms (" << gameState.rooms.size() << " loaded) ===\n";
+    for (auto& [id, room] : gameState.rooms) {
+        PuzzleState& ps = room.puzzle;
+        std::cout << "\n[" << id << "]\n";
+        std::cout << "  prompt:   " << ps.prompt << "\n";
+        std::cout << "  hint:     " << ps.hint << "\n";
+        std::cout << "  type:     " << (ps.type == PuzzleType::Dropdown ? "dp" : "tp") << "\n";
 
-    // --- Set up parser and terminal ---
-    CommandParser  parser(gameState);
-    CommandPrompt  commandPrompt(parser, &puzzleFiles, terminalFont);
+        std::cout << "  files:    ";
+        for (auto& f : ps.filenames) std::cout << f << " ";
+        std::cout << "\n";
 
-    // Active editor — null when CommandPrompt is showing
-    std::unique_ptr<Terminal> activeEditor = nullptr;
+        std::cout << "  commands: ";
+        for (auto& c : ps.availableCommands) std::cout << c << " ";
+        std::cout << "\n";
 
-    while (!WindowShouldClose()) {
+        std::cout << "  startingCode:\n" << ps.startingCode << "\n";
 
-        // --- Update ---
-        if (activeEditor) {
-            activeEditor->update();
-
-            if (activeEditor->isFinished()) {
-                // Editor saved — sync answers back to PuzzleState
-                // so CommandParser/PuzzleEngine can validate on "run"
-                Room* r = gameState.currentRoom();
-                if (r) {
-                    for (auto& pf : puzzleFiles)
-                        pf.syncToPuzzleState(r->puzzle);
-                }
-                activeEditor = nullptr;
-                // Return to CommandPrompt
-            }
+        if (ps.type == PuzzleType::Dropdown) {
+            std::cout << "  dropdown options: ";
+            for (auto& d : ps.dropdowns)
+                for (auto& o : d.options) std::cout << o << " ";
+            std::cout << "\n";
+            std::cout << "  correctSequence: ";
+            for (auto& s : ps.correctSequence) std::cout << s << " ";
+            std::cout << "\n";
         } else {
-            commandPrompt.update();
-
-            // CommandPrompt wants to open a file editor
-            if (commandPrompt.wantsToOpenFile()) {
-                std::string fname = commandPrompt.getRequestedOpenFile();
-                commandPrompt.clearOpenRequest();
-
-                // Find the matching PuzzleFile and open the right editor
-                for (auto& pf : puzzleFiles) {
-                    if (pf.name == fname) {
-                        if (pf.type == FileType::Dropdwn)
-                            activeEditor = std::make_unique<Dropdwn>(&pf, terminalFont);
-                        else
-                            activeEditor = std::make_unique<Typing>(&pf, terminalFont);
-                        break;
-                    }
-                }
-            }
+            std::cout << "  correctCode: " << ps.correctCode << "\n";
         }
-
-        // --- Draw ---
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        if (activeEditor)
-            activeEditor->draw();
-        else
-            commandPrompt.draw();
-
-        EndDrawing();
     }
 
-    CloseWindow();
     return 0;
 }

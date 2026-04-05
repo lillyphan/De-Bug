@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
+#include <iostream>
 
 // -------------------------------------------------------
 // Public
@@ -44,7 +45,6 @@ bool PuzzleEngine::validateDropdown(const PuzzleState& ps)
         if (normalise(d.selected()) != normalise(ps.correctSequence[i]))
             return false;
     }
-
     return true;
 }
 

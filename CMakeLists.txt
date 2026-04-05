@@ -42,6 +42,10 @@ set(HEADERS
     src/terminal/Terminal.h
 )
 
+add_executable(puzzletest src/core/oldMain.cpp)
+target_include_directories(puzzletest PRIVATE src/core src/terminal)
+target_link_libraries(puzzletest PRIVATE raylib)
+
 add_executable(TerminalGame ${SOURCES} ${HEADERS})
 
 target_include_directories(TerminalGame PRIVATE

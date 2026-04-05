@@ -220,6 +220,8 @@ int main(void) {
 
     showLevelTitle(level.name);
 
+    int currentLevel = 1;
+
     // Main game loop
     while (!WindowShouldClose()) { // Detect window close button or ESC key
         // Update
@@ -356,13 +358,26 @@ int main(void) {
             bool hitPlatform = false;
 
             // Check if puzzle was just solved — unlock the door
-            Room* room = terminal.getGameState().getRoom("challenge1");
+            std::string roomId = "challenge" + std::to_string(currentLevel);
+            std::cout << "checking roomId: " << roomId << "\n";
+            Room* room = terminal.getGameState().getRoom(roomId);
             bool doorUnlocked = room && room->doorUnlocked;
 
             if (hitDoor && doorUnlocked) {
-                DrawText("SUCCESS, door is open.", 10, 110, 20, DARKGREEN);
-                loadLevelFile("src/assets/rooms/room2.txt", level);
-                showLevelTitle(level.name);
+                currentLevel++;
+                std::string nextFile = "src/assets/rooms/room" + std::to_string(currentLevel) + ".txt";
+                if (!loadLevelFile(nextFile, level)) {
+                    // no more levels, win screen!!
+                } else {
+                    showLevelTitle(level.name);
+                    // reset player position to near the computer
+                    // bugPos = {
+                    //     level.computer.position.x,
+                    //     FLOOR_Y + PLAYER_RADIUS,
+                    //     level.computer.position.z + 12.0f
+                    // };
+                    // terminal.open("challenge" + std::to_string(currentLevel));
+                }
             } else if (hitDoor && !doorUnlocked) {
                 DrawText("Door is locked.", 10, 110, 20, DARKGREEN);
             }
@@ -387,7 +402,7 @@ int main(void) {
             }
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
-                terminal.open("challenge1");
+                terminal.open(roomId);
             }
         }
 
