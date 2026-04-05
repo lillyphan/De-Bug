@@ -47,6 +47,101 @@ void drawRotatedBox(Vector3 position, Vector3 size, float rotationDegrees,
     rlPopMatrix();
 }
 
+void drawCloud(Vector3 center) {
+    Color cloudColor = { 245, 250, 255, 235 };
+
+    DrawSphere({ center.x, center.y, center.z }, 4.0f, cloudColor);
+    DrawSphere({ center.x - 3.5f, center.y - 0.4f, center.z + 0.6f }, 3.0f, cloudColor);
+    DrawSphere({ center.x + 3.6f, center.y - 0.2f, center.z + 0.4f }, 3.2f, cloudColor);
+    DrawSphere({ center.x - 1.2f, center.y + 1.2f, center.z }, 2.8f, cloudColor);
+    DrawSphere({ center.x + 1.8f, center.y + 1.0f, center.z - 0.3f }, 2.6f, cloudColor);
+}
+
+void drawWinterTree(Vector3 trunkPos) {
+    Color trunkColor = { 105, 78, 60, 255 };
+    Color leafColor = { 118, 150, 132, 255 };
+    Color snowColor = { 235, 245, 255, 255 };
+
+    DrawCubeV(trunkPos, { 2.0f, 10.0f, 2.0f }, trunkColor);
+    DrawCubeWiresV(trunkPos, { 2.0f, 10.0f, 2.0f }, BLACK);
+
+    DrawCubeV({ trunkPos.x, trunkPos.y + 5.0f, trunkPos.z }, { 10.0f, 2.5f, 10.0f }, leafColor);
+    DrawCubeWiresV({ trunkPos.x, trunkPos.y + 5.0f, trunkPos.z }, { 10.0f, 2.5f, 10.0f }, BLACK);
+
+    DrawCubeV({ trunkPos.x, trunkPos.y + 8.0f, trunkPos.z }, { 7.5f, 2.3f, 7.5f }, leafColor);
+    DrawCubeWiresV({ trunkPos.x, trunkPos.y + 8.0f, trunkPos.z }, { 7.5f, 2.3f, 7.5f }, BLACK);
+
+    DrawCubeV({ trunkPos.x, trunkPos.y + 10.5f, trunkPos.z }, { 5.0f, 2.0f, 5.0f }, leafColor);
+    DrawCubeWiresV({ trunkPos.x, trunkPos.y + 10.5f, trunkPos.z }, { 5.0f, 2.0f, 5.0f }, BLACK);
+
+    DrawCubeV({ trunkPos.x, trunkPos.y + 6.2f, trunkPos.z }, { 8.6f, 0.45f, 8.6f }, snowColor);
+    DrawCubeV({ trunkPos.x, trunkPos.y + 9.1f, trunkPos.z }, { 6.4f, 0.40f, 6.4f }, snowColor);
+    DrawCubeV({ trunkPos.x, trunkPos.y + 11.35f, trunkPos.z }, { 4.2f, 0.35f, 4.2f }, snowColor);
+}
+
+void drawSnowLantern(Vector3 pos) {
+    Color postColor = { 95, 85, 100, 255 };
+    Color glowOuter = { 190, 220, 255, 120 };
+    Color glowInner = { 235, 245, 255, 255 };
+
+    DrawCubeV({ pos.x, pos.y + 2.0f, pos.z }, { 0.35f, 4.0f, 0.35f }, postColor);
+    DrawCubeWiresV({ pos.x, pos.y + 2.0f, pos.z }, { 0.35f, 4.0f, 0.35f }, BLACK);
+
+    DrawSphere({ pos.x, pos.y + 4.5f, pos.z }, 1.2f, glowOuter);
+    DrawSphere({ pos.x, pos.y + 4.5f, pos.z }, 0.55f, glowInner);
+}
+
+void drawSnowMound(Vector3 pos, float radius, Color color) {
+    DrawSphere(pos, radius, color);
+}
+
+void drawMoon(Vector3 pos) {
+    Color moonGlow = { 210, 230, 255, 90 };
+    Color moonCore = { 245, 248, 255, 255 };
+
+    DrawSphere(pos, 5.8f, moonGlow);
+    DrawSphere(pos, 3.2f, moonCore);
+
+    DrawSphere({ pos.x - 0.9f, pos.y + 0.6f, pos.z + 0.4f }, 0.45f, { 220, 228, 240, 255 });
+    DrawSphere({ pos.x + 1.0f, pos.y - 0.7f, pos.z + 0.2f }, 0.35f, { 220, 228, 240, 255 });
+    DrawSphere({ pos.x - 0.2f, pos.y - 1.1f, pos.z + 0.3f }, 0.28f, { 220, 228, 240, 255 });
+}
+
+
+void drawCrystalCluster(Vector3 basePos) {
+    Color crystalOuter = { 160, 220, 255, 180 };
+    Color crystalInner = { 220, 245, 255, 235 };
+
+    drawRotatedBox(
+        { basePos.x, basePos.y + 2.8f, basePos.z },
+        { 1.3f, 5.6f, 1.3f },
+        18.0f,
+        crystalOuter,
+        BLACK
+    );
+
+    drawRotatedBox(
+        { basePos.x - 1.4f, basePos.y + 2.0f, basePos.z + 0.5f },
+        { 1.0f, 4.2f, 1.0f },
+        -12.0f,
+        crystalOuter,
+        BLACK
+    );
+
+    drawRotatedBox(
+        { basePos.x + 1.2f, basePos.y + 1.7f, basePos.z - 0.4f },
+        { 0.9f, 3.6f, 0.9f },
+        10.0f,
+        crystalOuter,
+        BLACK
+    );
+
+    DrawSphere({ basePos.x, basePos.y + 2.4f, basePos.z }, 0.45f, crystalInner);
+    DrawSphere({ basePos.x - 1.4f, basePos.y + 1.7f, basePos.z + 0.5f }, 0.30f, crystalInner);
+    DrawSphere({ basePos.x + 1.2f, basePos.y + 1.4f, basePos.z - 0.4f }, 0.25f, crystalInner);
+}
+
+
 int main(void) {
     const int screenWidth = 800;
     const int screenHeight = 450;
@@ -86,9 +181,9 @@ int main(void) {
     float diagBugSpeed = sqrt(0.5f * bugSpeed * bugSpeed);
 
     vector<Platform> platforms = {
-        {{ -30.0f, -42.0f, -24.0f }, { 18.0f, 2.0f, 10.0f }, DARKGRAY},
-        {{ -10.0f, -34.0f, -12.0f }, { 18.0f, 2.0f, 10.0f }, DARKGRAY},
-        {{  27.0f, -34.0f,  18.0f }, { 16.0f, 2.0f, 16.0f }, DARKGRAY}
+        {{ -30.0f, -42.0f, -24.0f }, { 18.0f, 2.0f, 10.0f }, { 170, 176, 186, 255 }},
+        {{ -10.0f, -34.0f, -12.0f }, { 18.0f, 2.0f, 10.0f }, { 170, 176, 186, 255 }},
+        {{  27.0f, -34.0f,  18.0f }, { 16.0f, 2.0f, 16.0f }, { 170, 176, 186, 255 }}
     };
 
     Vector3 bugPos = { -34.0f, (-42.0f + 1.0f + bugSize[1] / 2.0f), -18.0f };
@@ -183,27 +278,52 @@ int main(void) {
         camera.position = currCamPos;
         camera.target = bugPos;
 
+        float time = (float)GetTime();
+        float snowGlow = 0.10f + 0.04f * sinf(time * 1.6f);
+
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground({ 215, 232, 255, 255 });
 
         BeginMode3D(camera);
 
-        DrawCubeWiresV({ 0, 0, 0 }, { 100, 100, 100 }, BLACK);
-        DrawCubeWiresV({ 0, 0, 0 }, { 200, 200, 200 }, RED);
+        drawMoon({ 30.0f, 16.0f, -42.0f });
 
-        DrawPlane({ 0, -50, 0 }, { 100, 100 }, GRAY);
-        DrawPlane({ 0, -50, 75 }, { 100, 50 }, GRAY);
+        drawCloud({ -30.0f, -2.0f, -34.0f });
+        drawCloud({   0.0f,  2.0f, -26.0f });
+        drawCloud({  28.0f, -1.0f, -38.0f });
+
+        DrawCubeWiresV({ 0, 0, 0 }, { 100, 100, 100 }, BLACK);
+        DrawCubeWiresV({ 0, 0, 0 }, { 200, 200, 200 }, Fade(RED, 0.30f));
+
+        DrawPlane({ 0, -50, 0 }, { 100, 100 }, { 224, 234, 242, 255 });
+        DrawPlane({ 0, -50, 75 }, { 100, 50 }, { 224, 234, 242, 255 });
+
+        DrawCubeV({ -20.0f, -49.8f, -12.0f }, { 22.0f, 0.15f, 16.0f }, Fade(SKYBLUE, 0.22f));
+        DrawCubeV({ 12.0f, -49.8f, 10.0f }, { 26.0f, 0.15f, 18.0f }, Fade({ 220, 240, 255, 255 }, 0.20f));
+        DrawCubeV({ 0.0f, -49.8f, 28.0f }, { 18.0f, 0.15f, 12.0f }, Fade({ 200, 230, 255, 255 }, 0.16f));
+
+        drawSnowMound({ -42.0f, -47.0f, -36.0f }, 6.0f, { 230, 238, 245, 255 });
+        drawSnowMound({ -34.0f, -47.5f, 28.0f }, 4.8f, { 230, 238, 245, 255 });
+        drawSnowMound({ 36.0f, -47.0f, 30.0f }, 6.5f, { 230, 238, 245, 255 });
+        drawSnowMound({ 42.0f, -47.0f, -18.0f }, 5.5f, { 230, 238, 245, 255 });
+        drawSnowMound({ -6.0f, -47.8f, 38.0f }, 4.2f, { 230, 238, 245, 255 });
 
         for (const Platform &platform : platforms) {
             DrawCubeV(platform.position, platform.size, platform.color);
             DrawCubeWiresV(platform.position, platform.size, BLACK);
+
+            DrawCubeV(
+                { platform.position.x, platform.position.y + 1.05f, platform.position.z },
+                { platform.size.x * 0.88f, 0.25f, platform.size.z * 0.88f },
+                { 240, 246, 252, 255 }
+            );
         }
 
         drawRotatedBox(
             { 9.0f, -31.5f, 1.5f },
             { 38.0f, 1.0f, 7.0f },
             -32.0f,
-            DARKBROWN,
+            { 165, 205, 235, 255 },
             BLACK
         );
 
@@ -211,7 +331,7 @@ int main(void) {
             { 10.5f, -29.8f, -1.8f },
             { 38.0f, 1.6f, 0.8f },
             -32.0f,
-            BROWN,
+            { 195, 205, 220, 255 },
             BLACK
         );
 
@@ -219,9 +339,42 @@ int main(void) {
             { 7.5f, -29.8f, 4.8f },
             { 38.0f, 1.6f, 0.8f },
             -32.0f,
-            BROWN,
+            { 195, 205, 220, 255 },
             BLACK
         );
+
+        drawRotatedBox(
+            { 9.0f, -30.9f, 1.5f },
+            { 35.5f, 0.20f, 5.7f },
+            -32.0f,
+            { 240, 246, 252, 255 },
+            { 220, 230, 240, 255 }
+        );
+
+        drawWinterTree({ -43.0f, -45.0f, -8.0f });
+        drawWinterTree({ -25.0f, -45.0f, 34.0f });
+        drawWinterTree({ 16.0f, -45.0f, -34.0f });
+        drawWinterTree({ 42.0f, -45.0f, 0.0f });
+        drawWinterTree({ 40.0f, -45.0f, 36.0f });
+
+        drawSnowLantern({ -19.0f, -42.0f, -27.0f });
+        drawSnowLantern({ 2.0f, -42.0f, 21.0f });
+        drawSnowLantern({ 27.0f, -34.0f, 31.0f });
+
+        DrawSphere({ -8.0f, -25.0f, -6.0f }, 1.3f, Fade({ 200, 230, 255, 255 }, 0.35f + snowGlow));
+        DrawSphere({ 12.0f, -21.0f, 8.0f }, 1.0f, Fade({ 220, 240, 255, 255 }, 0.32f + snowGlow));
+        DrawSphere({ 24.0f, -17.0f, 20.0f }, 0.9f, Fade({ 210, 235, 255, 255 }, 0.30f + snowGlow));
+        DrawSphere({ -28.0f, -18.0f, 12.0f }, 1.1f, Fade({ 220, 240, 255, 255 }, 0.30f + snowGlow));
+
+        DrawSphere({ -36.0f, -46.5f, -12.0f }, 1.6f, { 240, 246, 252, 255 });
+        DrawSphere({ -34.0f, -46.3f, -10.4f }, 1.1f, { 240, 246, 252, 255 });
+        DrawSphere({ 20.0f, -46.8f, 26.0f }, 1.4f, { 240, 246, 252, 255 });
+        DrawSphere({ 21.4f, -46.4f, 24.8f }, 0.9f, { 240, 246, 252, 255 });
+
+        drawCrystalCluster({ -38.0f, -49.0f,  10.0f });
+        drawCrystalCluster({ -6.0f,  -49.0f,  30.0f });
+        drawCrystalCluster({ 16.0f,  -49.0f, -26.0f });
+        drawCrystalCluster({ 34.0f,  -49.0f,   4.0f });
 
         DrawModelEx(
             bugModel,
@@ -250,7 +403,7 @@ int main(void) {
             GREEN
         );
 
-        DrawCubeV(doorPos, { 4.0f, 8.0f, 1.5f }, BLUE);
+        DrawCubeV(doorPos, { 4.0f, 8.0f, 1.5f }, { 120, 180, 255, 255 });
         DrawCubeWiresV(doorPos, { 4.0f, 8.0f, 1.5f }, BLACK);
 
         EndMode3D();
