@@ -23,7 +23,7 @@ public:
 
     Font terminalFont;
     Sound typingSounds[4];
-    Music computerSound;
+    Sound computerSound;
 
     void update();
     void draw();

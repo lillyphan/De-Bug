@@ -11,7 +11,7 @@ ComputerTerminal::ComputerTerminal()
     : openFlag(false),
     terminalFont(LoadFont("src/assets/fonts/terminal.ttf")) {
     PuzzleLoader::loadAll(gameState, "src/assets/puzzles", "src/assets/commands.txt");
-    computerSound = LoadMusicStream("src/assets/sounds/computer.mp3");
+    computerSound = LoadSound("src/assets/sounds/computer.mp3");
     typingSounds[0] = LoadSound("src/assets/sounds/type1.mp3");
     typingSounds[1] = LoadSound("src/assets/sounds/type2.mp3");
     typingSounds[2] = LoadSound("src/assets/sounds/type3.mp3");
@@ -30,7 +30,7 @@ void ComputerTerminal::rebuildPuzzleFiles() {
 }
 
 void ComputerTerminal::open(const std::string& roomId) {
-    PlayMusicStream(computerSound);
+    PlaySound(computerSound);
     gameState.activeRoomId = roomId;
     // gameState.player.currentRoomId = roomId;
 
@@ -56,8 +56,6 @@ bool ComputerTerminal::isOpen() const {
 
 void ComputerTerminal::update() {
     if (!openFlag) return;
-
-    UpdateMusicStream(computerSound);
 
     if (IsKeyPressed(KEY_ESCAPE)) {
         close();
@@ -126,4 +124,12 @@ void ComputerTerminal::draw() {
 void ComputerTerminal::playTypingSound() {
     int index = GetRandomValue(0, 3);
     PlaySound(typingSounds[index]);
+}
+
+void ComputerTerminal::close() {
+    StopSound(computerSound);
+    activeEditor.reset();
+    commandPrompt.reset();
+    parser.reset();
+    openFlag = false;
 }
