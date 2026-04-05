@@ -108,9 +108,6 @@ void ComputerTerminal::update() {
 void ComputerTerminal::draw() {
     if (!openFlag) return;
 
-    DrawText("COMPUTER TERMINAL", 20, 15, 28, GREEN);
-    DrawText("ESC to close", 20, 50, 18, LIGHTGRAY);
-
     if (activeEditor) {
         activeEditor->draw();
     } else if (commandPrompt) {
