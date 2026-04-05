@@ -125,8 +125,6 @@ int main(void) {
         return 1;
     }
 
-    showLevelTitle(level.name);
-
     // Define the camera to look into our 3d world
     Camera3D camera = { 0 };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f }; // Camera up vector (rotation towards target)
@@ -170,6 +168,57 @@ int main(void) {
 
     SetTargetFPS(fps); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
+
+    // --- ASCII splash screen ---
+    const char* title = 
+        "  ____  U _____ u  ____     _   _    ____   \n"
+        " |  _\"\\  \\| ___\"|/ |  _\"\\  | | | |  / __\"| \n"
+        "/| | | |  |  _|\"  /| | | | | |_| | <\\___ \\ \n"
+        "U| |_| |\\ | |___  U| |_| |\\|_   _|  u___) |\n"
+        " |____/ u |_____|  |____/ u  |_|    |____/ u\n"
+        "  |||_   <<   >>    |||_  .-,//|(_   )(  (( \n"
+        " (__)_) (__) (__)  (__)_)  \\_)-'_/  (__)  ) \n";
+
+    while (!WindowShouldClose()) {
+        if (IsKeyPressed(KEY_ENTER)) break;
+
+        BeginDrawing();
+            ClearBackground(BLACK);
+
+            // Draw ASCII title
+            int lineHeight = 18;
+            int fontSize   = 16;
+            int y          = GetScreenHeight()/2 - 80;
+
+            // Split and draw line by line so we can center each one
+            const char* ptr = title;
+            char lineBuf[128];
+            int lineIndex = 0;
+            while (*ptr) {
+                int len = 0;
+                while (*ptr && *ptr != '\n') {
+                    lineBuf[len++] = *ptr++;
+                }
+                lineBuf[len] = '\0';
+                if (*ptr == '\n') ptr++;
+
+                int x = GetScreenWidth()/2 - MeasureText(lineBuf, fontSize)/2;
+                DrawText(lineBuf, x, y + lineIndex * lineHeight, fontSize, GREEN);
+                lineIndex++;
+            }
+
+            // Blinking "press enter to play"
+            if ((int)(GetTime() * 2) % 2 == 0) {
+                DrawText("press enter to play",
+                    GetScreenWidth()/2 - MeasureText("press enter to play", 18)/2,
+                    GetScreenHeight()/2 + 60,
+                    18, DARKGREEN);
+            }
+
+        EndDrawing();
+    }
+
+    showLevelTitle(level.name);
 
     // Main game loop
     while (!WindowShouldClose()) { // Detect window close button or ESC key
