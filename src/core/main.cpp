@@ -104,7 +104,7 @@ int main(void) {
 
     // Load Level Data
     LevelData level;
-    if (!loadLevelFile("src/assets/rooms/level1.txt", level)) {
+    if (!loadLevelFile("src/assets/rooms/room1.txt", level)) {
         cout << "Failed to load level file.\n";
         CloseWindow();
         return 1;
@@ -319,7 +319,7 @@ int main(void) {
             }
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
-                terminal.open("room_01");
+                terminal.open("terminalTester");
             }
         }
 
