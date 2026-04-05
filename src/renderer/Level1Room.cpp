@@ -299,7 +299,7 @@ int main(void) {
 
         // fish and creatures
         drawFish({ -28.0f, -18.0f, -24.0f }, ORANGE, 1.0f);
-        drawFish({ -18.0f, -12.0f, -5.0f }, GOLD, -1.0f);
+        drawFish({ -18.0f, -12.0f, -5.0f }, GOLD, -1.0f);s
         drawFish({ -34.0f, -6.0f, 12.0f }, SKYBLUE, 1.0f);
         drawFish({ -10.0f, -22.0f, 24.0f }, LIME, -1.0f);
 

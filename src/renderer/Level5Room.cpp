@@ -37,33 +37,26 @@ struct Platform {
 void drawCatInBox(Vector3 boxPos, Color catColor) {
     Color boxColor = { 181, 140, 99, 255 };
 
-    // box
     DrawCubeV(boxPos, { 4.0f, 2.0f, 4.0f }, boxColor);
     DrawCubeWiresV(boxPos, { 4.0f, 2.0f, 4.0f }, WHITE);
 
-    // head
     Vector3 headPos = { boxPos.x, boxPos.y + 1.8f, boxPos.z };
     DrawSphere(headPos, 1.2f, catColor);
 
-    // left ear outer
     DrawCubeV({ headPos.x - 0.78f, headPos.y + 0.82f, headPos.z - 0.10f }, { 0.72f, 0.34f, 0.72f }, catColor);
     DrawCubeV({ headPos.x - 0.78f, headPos.y + 1.12f, headPos.z - 0.10f }, { 0.50f, 0.28f, 0.50f }, catColor);
     DrawCubeV({ headPos.x - 0.78f, headPos.y + 1.38f, headPos.z - 0.10f }, { 0.26f, 0.22f, 0.26f }, catColor);
 
-    // right ear outer
     DrawCubeV({ headPos.x + 0.78f, headPos.y + 0.82f, headPos.z - 0.10f }, { 0.72f, 0.34f, 0.72f }, catColor);
     DrawCubeV({ headPos.x + 0.78f, headPos.y + 1.12f, headPos.z - 0.10f }, { 0.50f, 0.28f, 0.50f }, catColor);
     DrawCubeV({ headPos.x + 0.78f, headPos.y + 1.38f, headPos.z - 0.10f }, { 0.26f, 0.22f, 0.26f }, catColor);
 
-    // inner ears - on visible/front side
     DrawCubeV({ headPos.x - 0.78f, headPos.y + 1.03f, headPos.z + 0.28f }, { 0.26f, 0.26f, 0.26f }, PINK);
     DrawCubeV({ headPos.x + 0.78f, headPos.y + 1.03f, headPos.z + 0.28f }, { 0.26f, 0.26f, 0.26f }, PINK);
 
-    // eyes - on visible/front side
     DrawSphere({ headPos.x - 0.38f, headPos.y + 0.20f, headPos.z + 1.22f }, 0.18f, BLACK);
     DrawSphere({ headPos.x + 0.38f, headPos.y + 0.20f, headPos.z + 1.22f }, 0.18f, BLACK);
 
-    // nose - on visible/front side
     DrawSphere({ headPos.x, headPos.y - 0.08f, headPos.z + 1.26f }, 0.15f, BLACK);
 }
 
@@ -72,28 +65,71 @@ void drawToriiGate(Vector3 basePos) {
     Color darkWood = { 70, 45, 30, 255 };
     Color accentBlack = BLACK;
 
-    // main pillars
     DrawCubeV({ basePos.x - 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, gateRed);
     DrawCubeWiresV({ basePos.x - 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, accentBlack);
 
     DrawCubeV({ basePos.x + 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, gateRed);
     DrawCubeWiresV({ basePos.x + 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, accentBlack);
 
-    // lower crossbeam
     DrawCubeV({ basePos.x, basePos.y + 28.0f, basePos.z }, { 34.0f, 3.0f, 3.5f }, gateRed);
     DrawCubeWiresV({ basePos.x, basePos.y + 28.0f, basePos.z }, { 34.0f, 3.0f, 3.5f }, accentBlack);
 
-    // top beam
     DrawCubeV({ basePos.x, basePos.y + 34.0f, basePos.z }, { 46.0f, 3.0f, 4.5f }, gateRed);
     DrawCubeWiresV({ basePos.x, basePos.y + 34.0f, basePos.z }, { 46.0f, 3.0f, 4.5f }, accentBlack);
 
-    // top cap
     DrawCubeV({ basePos.x, basePos.y + 37.0f, basePos.z }, { 38.0f, 1.4f, 2.8f }, darkWood);
     DrawCubeWiresV({ basePos.x, basePos.y + 37.0f, basePos.z }, { 38.0f, 1.4f, 2.8f }, accentBlack);
 
-    // center support
     DrawCubeV({ basePos.x, basePos.y + 22.0f, basePos.z }, { 2.3f, 12.0f, 2.3f }, darkWood);
     DrawCubeWiresV({ basePos.x, basePos.y + 22.0f, basePos.z }, { 2.3f, 12.0f, 2.3f }, accentBlack);
+}
+
+void drawLantern(Vector3 basePos) {
+    Color wood = { 90, 60, 35, 255 };
+    Color lanternRed = { 185, 55, 55, 255 };
+    Color glow = { 255, 220, 160, 220 };
+
+    DrawCubeV({ basePos.x, basePos.y + 2.5f, basePos.z }, { 0.8f, 5.0f, 0.8f }, wood);
+    DrawCubeWiresV({ basePos.x, basePos.y + 2.5f, basePos.z }, { 0.8f, 5.0f, 0.8f }, BLACK);
+
+    DrawCubeV({ basePos.x, basePos.y + 5.6f, basePos.z }, { 2.0f, 2.2f, 2.0f }, lanternRed);
+    DrawCubeWiresV({ basePos.x, basePos.y + 5.6f, basePos.z }, { 2.0f, 2.2f, 2.0f }, BLACK);
+
+    DrawCubeV({ basePos.x, basePos.y + 5.6f, basePos.z }, { 1.2f, 1.4f, 1.2f }, glow);
+    DrawCubeV({ basePos.x, basePos.y + 7.0f, basePos.z }, { 2.4f, 0.3f, 2.4f }, wood);
+}
+
+void drawPetalPile(Vector3 pos) {
+    Color petal = { 245, 185, 210, 255 };
+    DrawSphere({ pos.x, pos.y, pos.z }, 0.7f, petal);
+    DrawSphere({ pos.x + 0.8f, pos.y + 0.05f, pos.z + 0.3f }, 0.5f, petal);
+    DrawSphere({ pos.x - 0.7f, pos.y + 0.02f, pos.z - 0.4f }, 0.45f, petal);
+    DrawSphere({ pos.x + 0.3f, pos.y + 0.02f, pos.z - 0.8f }, 0.4f, petal);
+}
+
+void drawBackgroundBlossomTree(Vector3 trunkPos, float trunkHeight) {
+    Color trunk = { 85, 55, 38, 255 };
+    Color blossom = { 242, 170, 205, 255 };
+
+    DrawCubeV({ trunkPos.x, trunkPos.y + trunkHeight / 2.0f, trunkPos.z }, { 3.5f, trunkHeight, 3.5f }, trunk);
+    DrawCubeWiresV({ trunkPos.x, trunkPos.y + trunkHeight / 2.0f, trunkPos.z }, { 3.5f, trunkHeight, 3.5f }, BLACK);
+
+    float topY = trunkPos.y + trunkHeight + 1.0f;
+
+    DrawSphere({ trunkPos.x, topY + 1.0f, trunkPos.z }, 3.0f, blossom);
+    DrawSphere({ trunkPos.x - 2.6f, topY, trunkPos.z }, 2.3f, blossom);
+    DrawSphere({ trunkPos.x + 2.6f, topY, trunkPos.z }, 2.3f, blossom);
+    DrawSphere({ trunkPos.x, topY, trunkPos.z - 2.6f }, 2.3f, blossom);
+    DrawSphere({ trunkPos.x, topY, trunkPos.z + 2.6f }, 2.3f, blossom);
+}
+
+void drawCloud(Vector3 pos) {
+    Color cloudColor = { 255, 250, 252, 220 };
+
+    DrawSphere({ pos.x, pos.y, pos.z }, 2.4f, cloudColor);
+    DrawSphere({ pos.x - 2.2f, pos.y - 0.2f, pos.z + 0.4f }, 1.8f, cloudColor);
+    DrawSphere({ pos.x + 2.1f, pos.y - 0.1f, pos.z - 0.3f }, 1.9f, cloudColor);
+    DrawSphere({ pos.x + 0.4f, pos.y + 1.0f, pos.z }, 1.7f, cloudColor);
 }
 
 int main(void) {
@@ -136,33 +172,20 @@ int main(void) {
     float diagBugSpeed = sqrt(0.5f * bugSpeed * bugSpeed);
 
     vector<Platform> platforms = {
-        // center spawn square
-        {{   0.0f, -40.0f,   6.0f }, {  8.0f, 2.0f,  8.0f }, DARKGRAY},
+        {{   0.0f, -40.0f,   6.0f }, {  8.0f, 2.0f,  8.0f }, { 115, 108, 112, 255 }},
+        {{  18.0f, -34.0f,   2.0f }, { 12.0f, 2.0f,  8.0f }, { 115, 108, 112, 255 }},
+        {{ -18.0f, -28.0f,   0.0f }, { 12.0f, 2.0f,  8.0f }, { 115, 108, 112, 255 }},
 
-        // right middle platform
-        {{  18.0f, -34.0f,   2.0f }, { 12.0f, 2.0f,  8.0f }, DARKGRAY},
-
-        // left platform below first blossom
-        {{ -18.0f, -28.0f,   0.0f }, { 12.0f, 2.0f,  8.0f }, DARKGRAY},
-
-        // left blossom top (+ shape) - pink, moved much higher
         {{ -26.0f, -14.0f, -10.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
         {{ -32.0f, -14.0f, -10.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
         {{ -20.0f, -14.0f, -10.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
         {{ -26.0f, -14.0f,  -4.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
         {{ -26.0f, -14.0f, -16.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
 
-        // left blossom trunk - much taller
         {{ -26.0f, -21.0f, -10.0f }, {  4.0f, 14.0f, 4.0f }, DARKBROWN},
 
-        // left blossom trunk - dark brown, taller
-        {{ -26.0f, -23.0f, -10.0f }, {  4.0f, 10.0f, 4.0f }, DARKBROWN},
-
-
-        // right blossom trunk - dark brown
         {{  34.0f, -32.0f,  -2.0f }, {  4.0f, 14.0f,  4.0f }, DARKBROWN},
 
-        // right blossom top (+ shape) - pink
         {{  34.0f, -23.0f,  -2.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
         {{  28.0f, -23.0f,  -2.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
         {{  40.0f, -23.0f,  -2.0f }, {  6.0f, 2.0f,  6.0f }, PINK},
@@ -170,13 +193,13 @@ int main(void) {
         {{  34.0f, -23.0f,  -8.0f }, {  6.0f, 2.0f,  6.0f }, PINK}
     };
 
-        Vector3 computerPos = {
-    18.0f,
-    -34.0f + 1.0f + computerSize[1] / 2.0f,
-    -2.0f
-};
+    Vector3 computerPos = {
+        18.0f,
+        -34.0f + 1.0f + computerSize[1] / 2.0f,
+        -2.0f
+    };
 
-Vector3 doorPos = { -22.0f, -23.0f, -4.0f };
+    Vector3 doorPos = { -22.0f, -23.0f, -4.0f };
 
     SetTargetFPS(fps);
 
@@ -261,28 +284,53 @@ Vector3 doorPos = { -22.0f, -23.0f, -4.0f };
         camera.target = bugPos;
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground({ 255, 236, 245, 255 });
 
         BeginMode3D(camera);
 
-        DrawCubeWiresV({0,0,0}, {100, 100, 100}, BLACK);
-        DrawCubeWiresV({0,0,0}, {200, 200, 200}, RED);
+        drawCloud({ -30.0f, 0.0f, -30.0f });
+        drawCloud({ 0.0f, 6.0f, -20.0f });
+        drawCloud({ 26.0f, 1.0f, -34.0f });
 
-        DrawPlane({0,-50,0}, {100, 100}, GRAY);
-        DrawPlane({0,-50,75}, {100, 50}, GRAY);
+        DrawCubeWiresV({0,0,0}, {100, 100, 100}, Fade(BLACK, 0.35f));
+        DrawCubeWiresV({0,0,0}, {200, 200, 200}, Fade(RED, 0.18f));
+
+        DrawPlane({0,-50,0}, {100, 100}, { 196, 224, 186, 255 });
+        DrawPlane({0,-49.9f,75}, {100, 50}, { 186, 214, 176, 255 });
 
         drawToriiGate({ 4.0f, -50.0f, -48.0f });
-    
+
+        drawBackgroundBlossomTree({ -42.0f, -50.0f, -34.0f }, 16.0f);
+        drawBackgroundBlossomTree({ -8.0f, -50.0f, -36.0f }, 18.0f);
+        drawBackgroundBlossomTree({ 24.0f, -50.0f, -34.0f }, 17.0f);
+        drawBackgroundBlossomTree({ 44.0f, -50.0f, -22.0f }, 14.0f);
+
+        drawLantern({ -6.0f, -50.0f, -8.0f });
+        drawLantern({ 8.0f, -50.0f, -18.0f });
+        drawLantern({ 24.0f, -50.0f, 10.0f });
+        drawLantern({ -30.0f, -50.0f, 10.0f });
+
+        drawPetalPile({ -20.0f, -49.2f, -8.0f });
+        drawPetalPile({ -4.0f, -49.2f, 4.0f });
+        drawPetalPile({ 14.0f, -49.2f, 2.0f });
+        drawPetalPile({ 28.0f, -49.2f, -4.0f });
+        drawPetalPile({ 34.0f, -49.2f, 12.0f });
+        drawPetalPile({ -36.0f, -49.2f, 0.0f });
+
+        DrawSphere({ -34.0f, -48.5f, 18.0f }, 2.4f, { 120, 110, 118, 255 });
+        DrawSphere({ -30.0f, -48.8f, 21.0f }, 1.6f, { 120, 110, 118, 255 });
+        DrawSphere({ 40.0f, -48.6f, 16.0f }, 2.0f, { 120, 110, 118, 255 });
+        DrawSphere({ 43.0f, -48.8f, 13.0f }, 1.4f, { 120, 110, 118, 255 });
 
         for (const Platform &platform : platforms) {
             DrawCubeV(platform.position, platform.size, platform.color);
             DrawCubeWiresV(platform.position, platform.size, BLACK);
         }
 
-        // white cat in box on left blossom
-        drawCatInBox({ -26.0f, -10.5f, -10.0f }, WHITE);
+        DrawCubeV({ -18.0f, -27.6f, 0.0f }, { 13.5f, 0.3f, 9.5f }, Fade(PINK, 0.15f));
+        DrawCubeV({ 18.0f, -33.6f, 2.0f }, { 13.5f, 0.3f, 9.5f }, Fade(PINK, 0.15f));
 
-        // orange cat in box on right blossom
+        drawCatInBox({ -26.0f, -10.5f, -10.0f }, WHITE);
         drawCatInBox({ 34.0f, -19.5f, -2.0f }, ORANGE);
 
         DrawModelEx(
@@ -303,7 +351,7 @@ Vector3 doorPos = { -22.0f, -23.0f, -4.0f };
             GREEN
         );
 
-        DrawCubeV(doorPos, { 4.0f, 8.0f, 1.5f }, BLUE);
+        DrawCubeV(doorPos, { 4.0f, 8.0f, 1.5f }, { 80, 120, 180, 255 });
         DrawCubeWiresV(doorPos, { 4.0f, 8.0f, 1.5f }, BLACK);
 
         DrawModelEx(
