@@ -48,13 +48,7 @@ void ComputerTerminal::open(const std::string& roomId) {
     openFlag = true;
 }
 
-void ComputerTerminal::close() {
-    StopMusicStream(computerSound);
-    activeEditor.reset();
-    commandPrompt.reset();
-    parser.reset();
-    openFlag = false;
-}
+
 
 bool ComputerTerminal::isOpen() const {
     return openFlag;

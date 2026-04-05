@@ -5,9 +5,6 @@
 #include <algorithm>
 #include <cctype>
 
-// Note: Shapes parsed via LevelLoader fall back safely to standard rendering.
-// This remains compatible with the lighting shader restrictions since Models handle their own shaders directly.
-
 static std::string toLower(std::string s) {
     for (char& c : s) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
@@ -301,6 +298,20 @@ bool loadLevelFile(const std::string& filename, LevelData& level) {
                 std::cerr << "Invalid DoorSize line: " << line << '\n';
                 continue;
             }
+        }
+        else if (type == "BridgeBox" || type == "bridgebox") {
+            BridgeBoxObject bridge;
+            std::string colorToken;
+
+            if (!(iss >> bridge.position.x >> bridge.position.y >> bridge.position.z
+                      >> bridge.size.x >> bridge.size.y >> bridge.size.z
+                      >> colorToken)) {
+                std::cerr << "Invalid BridgeBox line: " << line << '\n';
+                continue;
+            }
+
+            bridge.color = parseColor(colorToken);
+            level.bridgeBoxes.push_back(bridge);
         }
         else {
             std::cerr << "Unknown object type: " << type << '\n';

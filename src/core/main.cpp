@@ -485,6 +485,9 @@ int main(void) {
     showLevelTitle(level.name);
 
     int currentLevel = 1;
+    bool bridgeSpawned = false;
+    float bridgeSpawnTime = 0.0f;
+    const float BRIDGE_RISE_DURATION = 1.5f;
 
     Color screenColor = RED;
 
@@ -516,6 +519,20 @@ int main(void) {
 
         vector<BoundingBox> platformBounds = buildPlatformBounds(level);
         vector<BoundingBox> solidBounds = buildSolidBounds(level);
+
+        // Add bridge collision when spawned
+        if (bridgeSpawned && !level.bridgeBoxes.empty()) {
+            float now = (float)GetTime();
+            float t = (now - bridgeSpawnTime) / BRIDGE_RISE_DURATION;
+            if (t > 1.0f) t = 1.0f;
+            float ease = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
+            for (const auto& b : level.bridgeBoxes) {
+                float currentY = (b.position.y - 20.0f) + 20.0f * ease;
+                solidBounds.push_back(makeBoundingBox(
+                    { b.position.x, currentY, b.position.z }, b.size));
+            }
+        }
+
         BoundingBox computerBox = getComputerBounds(level);
         BoundingBox doorBox = getDoorBounds(level);
 
@@ -651,6 +668,12 @@ int main(void) {
                 screenColor = RED;
             }
 
+            // Spawn bridge when puzzle is solved
+            if (doorUnlocked && !bridgeSpawned && !level.bridgeBoxes.empty()) {
+                bridgeSpawned = true;
+                bridgeSpawnTime = (float)GetTime();
+            }
+
             if (hitDoor && doorUnlocked) {
                 currentLevel++;
                 PlaySound(doorSound);
@@ -663,6 +686,7 @@ int main(void) {
                     bugPos = level.playerStart;
                     verticalVelocity = 0.0f;
                     onGround = false;
+                    bridgeSpawned = false;  // reset for next level
                 }
             } else if (hitDoor && !doorUnlocked) {
                 statusText = "Door is locked.";
@@ -751,6 +775,20 @@ int main(void) {
                 } else {
                     DrawCubeV(box.position, box.size, box.color);
                     DrawCubeWiresV(box.position, box.size, BLACK);
+                }
+            }
+
+            // Draw bridge with rise animation
+            if (bridgeSpawned && !level.bridgeBoxes.empty()) {
+                float now = (float)GetTime();
+                float t = (now - bridgeSpawnTime) / BRIDGE_RISE_DURATION;
+                if (t > 1.0f) t = 1.0f;
+                float ease = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
+                for (const auto& b : level.bridgeBoxes) {
+                    float currentY = (b.position.y - 20.0f) + 20.0f * ease;
+                    Vector3 drawPos = { b.position.x, currentY, b.position.z };
+                    DrawCubeV(drawPos, b.size, b.color);
+                    DrawCubeWiresV(drawPos, b.size, BLACK);
                 }
             }
 
