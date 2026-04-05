@@ -147,11 +147,7 @@ int main(void) {
     }; // x, y, z
     PLAYER_RADIUS = bugSize[1] / 2.0f; // Update collision radius to match visual model height
 
-    Vector3 bugPos = {
-        level.computer.position.x,
-        FLOOR_Y + PLAYER_RADIUS,
-        level.computer.position.z + 12.0f
-    }; // Spawn point
+    Vector3 bugPos = level.playerStart; // Spawn point
     float bugRot = 0;
 
     // Movement & Physics variables
