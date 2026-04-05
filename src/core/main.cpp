@@ -116,6 +116,13 @@ int main(void) {
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "De-Bug");
+    InitAudioDevice();
+
+    Sound walkSound     = LoadSound("src/assets/sounds/walk.mp3");
+    Sound jumpSound     = LoadSound("src/assets/sounds/jump.mp3");
+    Sound computerSound = LoadSound("src/assets/sounds/computer.mp3");
+    Sound doorSound     = LoadSound("src/assets/sounds/door.mp3");
+    Sound key     = LoadSound("src/assets/sounds/key1.mp3");
 
     // Load Level Data
     LevelData level;
@@ -176,7 +183,10 @@ int main(void) {
         " (__)_) (__) (__)  (__)_)  \\_)-'_/  (__)  ) \n";
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_ENTER)) break;
+        if (IsKeyPressed(KEY_ENTER)){
+            PlaySound(key);
+            break;
+        }
 
         BeginDrawing();
             ClearBackground(BLACK);
@@ -238,6 +248,13 @@ int main(void) {
             bool keyS = IsKeyDown(KEY_S);
             bool keyD = IsKeyDown(KEY_D);
 
+            if ((keyW || keyA || keyS || keyD) && onGround) {
+                if (!IsSoundPlaying(walkSound))
+                    PlaySound(walkSound);
+            } else {
+                StopSound(walkSound);
+            }
+
             float currMoveSpeed = moveSpeed
                 - (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed * 0.5f)
                 + (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed);
@@ -252,6 +269,7 @@ int main(void) {
             // Jumping Logic
             if (onGround && IsKeyPressed(KEY_SPACE)) {
                 verticalVelocity = jumpStrength;
+                PlaySound(jumpSound);
                 onGround = false;
             }
 
@@ -360,6 +378,7 @@ int main(void) {
 
             if (hitDoor && doorUnlocked) {
                 currentLevel++;
+                PlaySound(doorSound);
                 std::string nextFile = "src/assets/rooms/room" + std::to_string(currentLevel) + ".txt";
                 if (!loadLevelFile(nextFile, level)) {
                     // no more levels, win screen!!
@@ -397,6 +416,7 @@ int main(void) {
             }
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
+                // PlaySound(computerSound);
                 terminal.open(roomId);
             }
         }

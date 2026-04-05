@@ -11,6 +11,11 @@ ComputerTerminal::ComputerTerminal()
     : openFlag(false),
     terminalFont(LoadFont("src/assets/fonts/terminal.ttf")) {
     PuzzleLoader::loadAll(gameState, "src/assets/puzzles", "src/assets/commands.txt");
+    computerSound = LoadMusicStream("src/assets/sounds/computer.mp3");
+    typingSounds[0] = LoadSound("src/assets/sounds/type1.mp3");
+    typingSounds[1] = LoadSound("src/assets/sounds/type2.mp3");
+    typingSounds[2] = LoadSound("src/assets/sounds/type3.mp3");
+    typingSounds[3] = LoadSound("src/assets/sounds/type4.mp3");
 }
 
 void ComputerTerminal::rebuildPuzzleFiles() {
@@ -25,6 +30,7 @@ void ComputerTerminal::rebuildPuzzleFiles() {
 }
 
 void ComputerTerminal::open(const std::string& roomId) {
+    PlayMusicStream(computerSound);
     gameState.activeRoomId = roomId;
     gameState.player.currentRoomId = roomId;
 
@@ -36,13 +42,14 @@ void ComputerTerminal::open(const std::string& roomId) {
     rebuildPuzzleFiles();
 
     parser = std::make_unique<CommandParser>(gameState);
-    commandPrompt = std::make_unique<CommandPrompt>(*parser, &puzzleFiles, terminalFont);
+    commandPrompt = std::make_unique<CommandPrompt>(*parser, &puzzleFiles, terminalFont, *this);
     activeEditor.reset();
 
     openFlag = true;
 }
 
 void ComputerTerminal::close() {
+    StopMusicStream(computerSound);
     activeEditor.reset();
     commandPrompt.reset();
     parser.reset();
@@ -55,6 +62,8 @@ bool ComputerTerminal::isOpen() const {
 
 void ComputerTerminal::update() {
     if (!openFlag) return;
+
+    UpdateMusicStream(computerSound);
 
     if (IsKeyPressed(KEY_ESCAPE)) {
         close();
@@ -100,9 +109,9 @@ void ComputerTerminal::update() {
         for (auto& pf : puzzleFiles) {
             if (pf.name == fname) {
                 if (pf.type == FileType::Dropdwn) {
-                    activeEditor = std::make_unique<Dropdwn>(&pf, terminalFont);
+                    activeEditor = std::make_unique<Dropdwn>(&pf, terminalFont, *this);
                 } else {
-                    activeEditor = std::make_unique<Typing>(&pf, terminalFont);
+                    activeEditor = std::make_unique<Typing>(&pf, terminalFont, *this);
                 }
                 break;
             }
@@ -118,4 +127,9 @@ void ComputerTerminal::draw() {
     } else if (commandPrompt) {
         commandPrompt->draw();
     }
+}
+
+void ComputerTerminal::playTypingSound() {
+    int index = GetRandomValue(0, 3);
+    PlaySound(typingSounds[index]);
 }
