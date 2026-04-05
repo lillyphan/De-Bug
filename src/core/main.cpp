@@ -46,10 +46,6 @@ bool isCollidableBox(const BoxObject& box) {
     return (box.size.x >= 0.5f && box.size.y >= 0.1f && box.size.z >= 0.5f);
 }
 
-BoundingBox getStingrayPlatformBounds(const StingrayPlatformObject& s) {
-    return makeBoundingBox(s.position, { 9.0f, 1.2f, 8.0f });
-}
-
 BoundingBox getSphereBounds(const SphereObject& s) {
     Vector3 size = { s.radius * 2.0f, s.radius * 2.0f, s.radius * 2.0f };
     return makeBoundingBox(s.position, size);
@@ -82,39 +78,26 @@ vector<BoundingBox> buildPlatformBounds(const LevelData& level) {
         }
     }
 
-    for (const StingrayPlatformObject& s : level.stingrayPlatforms) {
-        bounds.push_back(getStingrayPlatformBounds(s));
-    }
-
     return bounds;
 }
 
 vector<BoundingBox> buildSolidBounds(const LevelData& level) {
     vector<BoundingBox> solids;
 
-    // Collidable boxes
     for (const BoxObject& box : level.boxes) {
         if (isCollidableBox(box)) {
             solids.push_back(makeBoundingBox(box.position, box.size));
         }
     }
 
-    // Stingray platforms
-    for (const StingrayPlatformObject& s : level.stingrayPlatforms) {
-        solids.push_back(getStingrayPlatformBounds(s));
-    }
-
-    // Collidable spheres
     for (const SphereObject& s : level.spheres) {
         solids.push_back(getSphereBounds(s));
     }
 
-    // Collidable cylinders
     for (const CylinderExObject& c : level.cylinders) {
         solids.push_back(getCylinderExBounds(c));
     }
 
-    // Computer and door
     solids.push_back(getComputerBounds(level));
     solids.push_back(getDoorBounds(level));
 
@@ -236,26 +219,102 @@ void drawBubbleColumn(Vector3 basePos, float timeOffset) {
     }
 }
 
-void drawStingrayPlatform(Vector3 pos) {
-    Color rayColor = { 85, 105, 120, 255 };
+void drawCatInBox(Vector3 boxPos, Color catColor) {
+    Color boxColor = { 181, 140, 99, 255 };
 
-    DrawSphere({ pos.x, pos.y, pos.z }, 3.4f, rayColor);
-    DrawSphere({ pos.x - 2.4f, pos.y, pos.z }, 2.2f, rayColor);
-    DrawSphere({ pos.x + 2.4f, pos.y, pos.z }, 2.2f, rayColor);
+    DrawCubeV(boxPos, { 4.0f, 2.0f, 4.0f }, boxColor);
+    DrawCubeWiresV(boxPos, { 4.0f, 2.0f, 4.0f }, WHITE);
 
-    DrawCubeV({ pos.x, pos.y + 0.4f, pos.z }, { 9.0f, 1.2f, 8.0f }, rayColor);
+    Vector3 headPos = { boxPos.x, boxPos.y + 1.8f, boxPos.z };
+    DrawSphere(headPos, 1.2f, catColor);
 
-    DrawCylinderEx(
-        { pos.x, pos.y - 0.2f, pos.z - 4.0f },
-        { pos.x, pos.y - 0.6f, pos.z - 11.0f },
-        0.18f,
-        0.05f,
-        6,
-        rayColor
-    );
+    DrawCubeV({ headPos.x - 0.78f, headPos.y + 0.82f, headPos.z - 0.10f }, { 0.72f, 0.34f, 0.72f }, catColor);
+    DrawCubeV({ headPos.x - 0.78f, headPos.y + 1.12f, headPos.z - 0.10f }, { 0.50f, 0.28f, 0.50f }, catColor);
+    DrawCubeV({ headPos.x - 0.78f, headPos.y + 1.38f, headPos.z - 0.10f }, { 0.26f, 0.22f, 0.26f }, catColor);
 
-    DrawSphere({ pos.x - 1.0f, pos.y + 1.1f, pos.z + 1.2f }, 0.18f, BLACK);
-    DrawSphere({ pos.x + 1.0f, pos.y + 1.1f, pos.z + 1.2f }, 0.18f, BLACK);
+    DrawCubeV({ headPos.x + 0.78f, headPos.y + 0.82f, headPos.z - 0.10f }, { 0.72f, 0.34f, 0.72f }, catColor);
+    DrawCubeV({ headPos.x + 0.78f, headPos.y + 1.12f, headPos.z - 0.10f }, { 0.50f, 0.28f, 0.50f }, catColor);
+    DrawCubeV({ headPos.x + 0.78f, headPos.y + 1.38f, headPos.z - 0.10f }, { 0.26f, 0.22f, 0.26f }, catColor);
+
+    DrawCubeV({ headPos.x - 0.78f, headPos.y + 1.03f, headPos.z + 0.28f }, { 0.26f, 0.26f, 0.26f }, PINK);
+    DrawCubeV({ headPos.x + 0.78f, headPos.y + 1.03f, headPos.z + 0.28f }, { 0.26f, 0.26f, 0.26f }, PINK);
+
+    DrawSphere({ headPos.x - 0.38f, headPos.y + 0.20f, headPos.z + 1.22f }, 0.18f, BLACK);
+    DrawSphere({ headPos.x + 0.38f, headPos.y + 0.20f, headPos.z + 1.22f }, 0.18f, BLACK);
+
+    DrawSphere({ headPos.x, headPos.y - 0.08f, headPos.z + 1.26f }, 0.15f, BLACK);
+}
+
+void drawToriiGate(Vector3 basePos) {
+    Color gateRed = { 170, 35, 35, 255 };
+    Color darkWood = { 70, 45, 30, 255 };
+    Color accentBlack = BLACK;
+
+    DrawCubeV({ basePos.x - 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, gateRed);
+    DrawCubeWiresV({ basePos.x - 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, accentBlack);
+
+    DrawCubeV({ basePos.x + 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, gateRed);
+    DrawCubeWiresV({ basePos.x + 13.0f, basePos.y + 19.0f, basePos.z }, { 3.5f, 38.0f, 3.5f }, accentBlack);
+
+    DrawCubeV({ basePos.x, basePos.y + 28.0f, basePos.z }, { 34.0f, 3.0f, 3.5f }, gateRed);
+    DrawCubeWiresV({ basePos.x, basePos.y + 28.0f, basePos.z }, { 34.0f, 3.0f, 3.5f }, accentBlack);
+
+    DrawCubeV({ basePos.x, basePos.y + 34.0f, basePos.z }, { 46.0f, 3.0f, 4.5f }, gateRed);
+    DrawCubeWiresV({ basePos.x, basePos.y + 34.0f, basePos.z }, { 46.0f, 3.0f, 4.5f }, accentBlack);
+
+    DrawCubeV({ basePos.x, basePos.y + 37.0f, basePos.z }, { 38.0f, 1.4f, 2.8f }, darkWood);
+    DrawCubeWiresV({ basePos.x, basePos.y + 37.0f, basePos.z }, { 38.0f, 1.4f, 2.8f }, accentBlack);
+
+    DrawCubeV({ basePos.x, basePos.y + 22.0f, basePos.z }, { 2.3f, 12.0f, 2.3f }, darkWood);
+    DrawCubeWiresV({ basePos.x, basePos.y + 22.0f, basePos.z }, { 2.3f, 12.0f, 2.3f }, accentBlack);
+}
+
+void drawLantern(Vector3 basePos) {
+    Color wood = { 90, 60, 35, 255 };
+    Color lanternRed = { 185, 55, 55, 255 };
+    Color glow = { 255, 220, 160, 220 };
+
+    DrawCubeV({ basePos.x, basePos.y + 2.5f, basePos.z }, { 0.8f, 5.0f, 0.8f }, wood);
+    DrawCubeWiresV({ basePos.x, basePos.y + 2.5f, basePos.z }, { 0.8f, 5.0f, 0.8f }, BLACK);
+
+    DrawCubeV({ basePos.x, basePos.y + 5.6f, basePos.z }, { 2.0f, 2.2f, 2.0f }, lanternRed);
+    DrawCubeWiresV({ basePos.x, basePos.y + 5.6f, basePos.z }, { 2.0f, 2.2f, 2.0f }, BLACK);
+
+    DrawCubeV({ basePos.x, basePos.y + 5.6f, basePos.z }, { 1.2f, 1.4f, 1.2f }, glow);
+    DrawCubeV({ basePos.x, basePos.y + 7.0f, basePos.z }, { 2.4f, 0.3f, 2.4f }, wood);
+}
+
+void drawPetalPile(Vector3 pos) {
+    Color petal = { 245, 185, 210, 255 };
+    DrawSphere({ pos.x, pos.y, pos.z }, 0.7f, petal);
+    DrawSphere({ pos.x + 0.8f, pos.y + 0.05f, pos.z + 0.3f }, 0.5f, petal);
+    DrawSphere({ pos.x - 0.7f, pos.y + 0.02f, pos.z - 0.4f }, 0.45f, petal);
+    DrawSphere({ pos.x + 0.3f, pos.y + 0.02f, pos.z - 0.8f }, 0.4f, petal);
+}
+
+void drawBackgroundBlossomTree(Vector3 trunkPos, float trunkHeight) {
+    Color trunk = { 85, 55, 38, 255 };
+    Color blossom = { 242, 170, 205, 255 };
+
+    DrawCubeV({ trunkPos.x, trunkPos.y + trunkHeight / 2.0f, trunkPos.z }, { 3.5f, trunkHeight, 3.5f }, trunk);
+    DrawCubeWiresV({ trunkPos.x, trunkPos.y + trunkHeight / 2.0f, trunkPos.z }, { 3.5f, trunkHeight, 3.5f }, BLACK);
+
+    float topY = trunkPos.y + trunkHeight + 1.0f;
+
+    DrawSphere({ trunkPos.x, topY + 1.0f, trunkPos.z }, 3.0f, blossom);
+    DrawSphere({ trunkPos.x - 2.6f, topY, trunkPos.z }, 2.3f, blossom);
+    DrawSphere({ trunkPos.x + 2.6f, topY, trunkPos.z }, 2.3f, blossom);
+    DrawSphere({ trunkPos.x, topY, trunkPos.z - 2.6f }, 2.3f, blossom);
+    DrawSphere({ trunkPos.x, topY, trunkPos.z + 2.6f }, 2.3f, blossom);
+}
+
+void drawCloud(Vector3 pos) {
+    Color cloudColor = { 255, 250, 252, 220 };
+
+    DrawSphere({ pos.x, pos.y, pos.z }, 2.4f, cloudColor);
+    DrawSphere({ pos.x - 2.2f, pos.y - 0.2f, pos.z + 0.4f }, 1.8f, cloudColor);
+    DrawSphere({ pos.x + 2.1f, pos.y - 0.1f, pos.z - 0.3f }, 1.9f, cloudColor);
+    DrawSphere({ pos.x + 0.4f, pos.y + 1.0f, pos.z }, 1.7f, cloudColor);
 }
 
 // -----------------------------------------------------------------------------
@@ -274,11 +333,17 @@ int main(void) {
     Sound jumpSound     = LoadSound("src/assets/sounds/jump.mp3");
     Sound computerSound = LoadSound("src/assets/sounds/computer.mp3");
     Sound doorSound     = LoadSound("src/assets/sounds/door.mp3");
-    Sound key     = LoadSound("src/assets/sounds/key1.mp3");
+    Sound key           = LoadSound("src/assets/sounds/key1.mp3");
 
     LevelData level;
     if (!loadLevelFile("src/assets/rooms/room1.txt", level)) {
         cout << "Failed to load level file.\n";
+        UnloadSound(walkSound);
+        UnloadSound(jumpSound);
+        UnloadSound(computerSound);
+        UnloadSound(doorSound);
+        UnloadSound(key);
+        CloseAudioDevice();
         CloseWindow();
         return 1;
     }
@@ -317,10 +382,17 @@ int main(void) {
     SetTargetFPS(fps);
 
     const char* title =
-        "$$$$$$$\\\\ $$$$$$$$\\\\$$$$$$$\\\\  $$\\\\  $$\\\\  $$$$$$\\\\\n$$  __$$\\\\$$  _____|$$  __$$\\\\ $$ |  $$ |$$  __ $$\\\\\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ /  \\\\__|\n$$ |  $$ |$$$$$\\\\   $$$$$$$\\\\ |$$ |  $$ |$$ |  $$$$\\\\\n$$ |  $$ |$$  __|   $$  __$$\\\\ $$ |  $$ |$$ |  \\\\_$$ |\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ |     $$ |\n$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$   |\n\\\\_______/ \\\\________|\\\\______/   \\\\______/  \\\\______/";
+        "$$$$$$$\\\\ $$$$$$$$\\\\$$$$$$$\\\\  $$\\\\  $$\\\\  $$$$$$\\\\\n"
+        "$$  __$$\\\\$$  _____|$$  __$$\\\\ $$ |  $$ |$$  __ $$\\\\\n"
+        "$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ /  \\\\__|\n"
+        "$$ |  $$ |$$$$$\\\\   $$$$$$$\\\\ |$$ |  $$ |$$ |  $$$$\\\\\n"
+        "$$ |  $$ |$$  __|   $$  __$$\\\\ $$ |  $$ |$$ |  \\\\_$$ |\n"
+        "$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ |     $$ |\n"
+        "$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$   |\n"
+        "\\_______/ \\________|\\______/   \\______/  \\______/";
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_ENTER)){
+        if (IsKeyPressed(KEY_ENTER)) {
             PlaySound(key);
             break;
         }
@@ -328,13 +400,10 @@ int main(void) {
         BeginDrawing();
             ClearBackground(BLACK);
 
-            int lineHeight    = 18;
+            int lineHeight = 18;
             int titleFontSize = 16;
-
-            // Emulate a monospaced font by forcing a fixed width based on the '$' character
             int fixedCharWidth = MeasureText("/", titleFontSize);
 
-            // Calculate max columns to perfectly center the entire block on the screen
             int maxCols = 0;
             int currentCols = 0;
             for (const char* p = title; *p != '\0'; p++) {
@@ -350,7 +419,6 @@ int main(void) {
             int startX = GetScreenWidth() / 2 - (maxCols * fixedCharWidth) / 2;
             int y = GetScreenHeight() / 2 - 80;
 
-            // Draw character by character on our rigid grid
             int row = 0;
             int col = 0;
             for (const char* p = title; *p != '\0'; p++) {
@@ -358,7 +426,6 @@ int main(void) {
                     row++;
                     col = 0;
                 } else {
-                    // Only draw visible characters; we let the space just advance the column
                     if (*p != ' ') {
                         char cStr[2] = { *p, '\0' };
                         DrawText(cStr, startX + col * fixedCharWidth, y + row * lineHeight, titleFontSize, GREEN);
@@ -397,8 +464,9 @@ int main(void) {
             bool keyD = IsKeyDown(KEY_D);
 
             if ((keyW || keyA || keyS || keyD) && onGround) {
-                if (!IsSoundPlaying(walkSound))
+                if (!IsSoundPlaying(walkSound)) {
                     PlaySound(walkSound);
+                }
             } else {
                 StopSound(walkSound);
             }
@@ -481,7 +549,7 @@ int main(void) {
 
                     if (verticalVelocity > 0.0f &&
                         oldTop <= boxBottom + 0.25f &&
-                        newTop >= boxBottom - PLAYER_RADIUS) {
+                        newTop >= boxBottom - 0.25f) {
                         bugPos.y = boxBottom - PLAYER_RADIUS;
                         verticalVelocity = 0.0f;
                         landedOnSomething = true;
@@ -550,7 +618,7 @@ int main(void) {
             }
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
-                // PlaySound(computerSound);
+                PlaySound(computerSound);
                 terminal.open(roomId);
             }
         }
@@ -575,8 +643,28 @@ int main(void) {
 
             BeginMode3D(camera);
 
+            for (const CloudObject& c : level.clouds) {
+                drawCloud(c.position);
+            }
+
             for (const PlaneObject& plane : level.planes) {
                 DrawPlane(plane.position, plane.size, plane.color);
+            }
+
+            for (const ToriiGateObject& t : level.toriiGates) {
+                drawToriiGate(t.basePos);
+            }
+
+            for (const BackgroundBlossomTreeObject& t : level.backgroundBlossomTrees) {
+                drawBackgroundBlossomTree(t.trunkPos, t.trunkHeight);
+            }
+
+            for (const LanternObject& l : level.lanterns) {
+                drawLantern(l.basePos);
+            }
+
+            for (const PetalPileObject& p : level.petalPiles) {
+                drawPetalPile(p.position);
             }
 
             for (const BoxObject& box : level.boxes) {
@@ -619,8 +707,8 @@ int main(void) {
                 drawJellyfish(j.position, j.color);
             }
 
-            for (const StingrayPlatformObject& s : level.stingrayPlatforms) {
-                drawStingrayPlatform(s.position);
+            for (const CatInBoxObject& c : level.catInBoxes) {
+                drawCatInBox(c.position, c.catColor);
             }
 
             DrawModelEx(
@@ -673,10 +761,19 @@ int main(void) {
         EndDrawing();
     }
 
+    StopSound(walkSound);
+
+    UnloadSound(walkSound);
+    UnloadSound(jumpSound);
+    UnloadSound(computerSound);
+    UnloadSound(doorSound);
+    UnloadSound(key);
+
     UnloadModel(computerModel);
     UnloadModel(computerScreenModel);
     UnloadModel(bugModel);
 
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }

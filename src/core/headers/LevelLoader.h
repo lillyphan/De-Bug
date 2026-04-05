@@ -53,7 +53,29 @@ struct BubbleColumnObject {
     float timeOffset;
 };
 
-struct StingrayPlatformObject {
+struct CatInBoxObject {
+    Vector3 position;
+    Color catColor;
+};
+
+struct ToriiGateObject {
+    Vector3 basePos;
+};
+
+struct LanternObject {
+    Vector3 basePos;
+};
+
+struct PetalPileObject {
+    Vector3 position;
+};
+
+struct BackgroundBlossomTreeObject {
+    Vector3 trunkPos;
+    float trunkHeight;
+};
+
+struct CloudObject {
     Vector3 position;
 };
 
@@ -78,7 +100,13 @@ struct LevelData {
     std::vector<JellyfishObject> jellyfish;
     std::vector<SeaweedObject> seaweed;
     std::vector<BubbleColumnObject> bubbleColumns;
-    std::vector<StingrayPlatformObject> stingrayPlatforms;
+
+    std::vector<CatInBoxObject> catInBoxes;
+    std::vector<ToriiGateObject> toriiGates;
+    std::vector<LanternObject> lanterns;
+    std::vector<PetalPileObject> petalPiles;
+    std::vector<BackgroundBlossomTreeObject> backgroundBlossomTrees;
+    std::vector<CloudObject> clouds;
 };
 
 constexpr Vector3 DEFAULT_COMPUTER_SIZE = { 2.0f, 1.5f, 1.5f };

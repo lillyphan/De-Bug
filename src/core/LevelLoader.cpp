@@ -12,23 +12,15 @@ static std::string toLower(std::string s) {
     return s;
 }
 
-static bool parseVector3Line(const std::string& line, Vector3& outVec) {
-    std::istringstream iss(line);
-    return static_cast<bool>(iss >> outVec.x >> outVec.y >> outVec.z);
-}
-
-static bool parseVector3Stream(std::istringstream& iss, Vector3& outVec) {
-    return static_cast<bool>(iss >> outVec.x >> outVec.y >> outVec.z);
-}
-
-static bool parseVector2Stream(std::istringstream& iss, Vector2& outVec) {
-    return static_cast<bool>(iss >> outVec.x >> outVec.y);
-}
-
 static std::string trim(const std::string& s) {
     size_t start = s.find_first_not_of(" \t\r\n");
     size_t end   = s.find_last_not_of(" \t\r\n");
     return (start == std::string::npos) ? "" : s.substr(start, end - start + 1);
+}
+
+static bool parseVector3Line(const std::string& line, Vector3& outVec) {
+    std::istringstream iss(line);
+    return static_cast<bool>(iss >> outVec.x >> outVec.y >> outVec.z);
 }
 
 Color parseColor(const std::string& colorToken) {
@@ -61,6 +53,7 @@ Color parseColor(const std::string& colorToken) {
     if (c == "purple") return PURPLE;
     if (c == "violet") return VIOLET;
     if (c == "pink") return PINK;
+    if (c == "magenta") return MAGENTA;
     if (c == "maroon") return MAROON;
     if (c == "lime") return LIME;
     if (c == "gold") return GOLD;
@@ -68,6 +61,7 @@ Color parseColor(const std::string& colorToken) {
     if (c == "darkblue") return DARKBLUE;
     if (c == "skyblue") return SKYBLUE;
     if (c == "beige") return BEIGE;
+    if (c == "lightgray") return LIGHTGRAY;
 
     std::cerr << "Unknown color: " << colorToken << ". Using WHITE.\n";
     return WHITE;
@@ -229,15 +223,69 @@ bool loadLevelFile(const std::string& filename, LevelData& level) {
 
             level.bubbleColumns.push_back(b);
         }
-        else if (type == "StingrayPlatform" || type == "stingrayplatform") {
-            StingrayPlatformObject s;
+        else if (type == "CatInBox" || type == "catinbox") {
+            CatInBoxObject c;
+            std::string colorToken;
 
-            if (!(iss >> s.position.x >> s.position.y >> s.position.z)) {
-                std::cerr << "Invalid StingrayPlatform line: " << line << '\n';
+            if (!(iss >> c.position.x >> c.position.y >> c.position.z
+                      >> colorToken)) {
+                std::cerr << "Invalid CatInBox line: " << line << '\n';
                 continue;
             }
 
-            level.stingrayPlatforms.push_back(s);
+            c.catColor = parseColor(colorToken);
+            level.catInBoxes.push_back(c);
+        }
+        else if (type == "ToriiGate" || type == "toriigate") {
+            ToriiGateObject t;
+
+            if (!(iss >> t.basePos.x >> t.basePos.y >> t.basePos.z)) {
+                std::cerr << "Invalid ToriiGate line: " << line << '\n';
+                continue;
+            }
+
+            level.toriiGates.push_back(t);
+        }
+        else if (type == "Lantern" || type == "lantern") {
+            LanternObject l;
+
+            if (!(iss >> l.basePos.x >> l.basePos.y >> l.basePos.z)) {
+                std::cerr << "Invalid Lantern line: " << line << '\n';
+                continue;
+            }
+
+            level.lanterns.push_back(l);
+        }
+        else if (type == "PetalPile" || type == "petalpile") {
+            PetalPileObject p;
+
+            if (!(iss >> p.position.x >> p.position.y >> p.position.z)) {
+                std::cerr << "Invalid PetalPile line: " << line << '\n';
+                continue;
+            }
+
+            level.petalPiles.push_back(p);
+        }
+        else if (type == "BackgroundBlossomTree" || type == "backgroundblossomtree") {
+            BackgroundBlossomTreeObject t;
+
+            if (!(iss >> t.trunkPos.x >> t.trunkPos.y >> t.trunkPos.z
+                      >> t.trunkHeight)) {
+                std::cerr << "Invalid BackgroundBlossomTree line: " << line << '\n';
+                continue;
+            }
+
+            level.backgroundBlossomTrees.push_back(t);
+        }
+        else if (type == "Cloud" || type == "cloud") {
+            CloudObject c;
+
+            if (!(iss >> c.position.x >> c.position.y >> c.position.z)) {
+                std::cerr << "Invalid Cloud line: " << line << '\n';
+                continue;
+            }
+
+            level.clouds.push_back(c);
         }
         else if (type == "ComputerSize" || type == "computersize") {
             if (!(iss >> level.computer.size.x >> level.computer.size.y >> level.computer.size.z)) {
