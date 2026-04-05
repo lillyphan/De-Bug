@@ -45,6 +45,8 @@ We built a 3D platformer/puzzle solving game from scratch in C++ using raylib wh
 | :------------------------- | :---------------------------- |
 | **Move**                   | `WASD`                        |
 | **Jump**                   | `Space`                       |
+| **Sprint**                 | `Left Shift`                  |
+| **Sneak**                  | `Left Ctrl`                   |
 | **Interact with Terminal** | `E` when in front of terminal |
 
 _(Note: Customize these keys based on your actual implementation)_
