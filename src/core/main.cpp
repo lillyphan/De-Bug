@@ -89,6 +89,21 @@ bool isTouchingBox(const BoundingBox& a, const BoundingBox& b, float eps = 0.25f
     return overlapX && overlapY && overlapZ;
 }
 
+void showLevelTitle(const std::string& name) {
+    double startTime = GetTime();
+    while (GetTime() - startTime < 1.0) {
+        BeginDrawing();
+            ClearBackground(BLACK);
+            int fontSize = 40;
+            int textW = MeasureText(name.c_str(), fontSize);
+            DrawText(name.c_str(),
+                GetScreenWidth()/2  - textW/2,
+                GetScreenHeight()/2 - fontSize/2,
+                fontSize, GREEN);
+        EndDrawing();
+    }
+}
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -109,6 +124,8 @@ int main(void) {
         CloseWindow();
         return 1;
     }
+
+    showLevelTitle(level.name);
 
     // Define the camera to look into our 3d world
     Camera3D camera = { 0 };
@@ -175,14 +192,14 @@ int main(void) {
             bool keyD = IsKeyDown(KEY_D);
 
             float currMoveSpeed = moveSpeed
-                - (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed * 0.5f)
-                + (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed);
+                - (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed * 0.5f)
+                + (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed);
 
             // Check if moving diagonal
             if ((keyW || keyS) && (keyA || keyD)) {
                 currMoveSpeed = diagMoveSpeed
-                    - (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed * 0.5f)
-                    + (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed);
+                    - (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed * 0.5f)
+                    + (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed);
             }
 
             // Jumping Logic
@@ -290,11 +307,13 @@ int main(void) {
             bool hitPlatform = false;
 
             // Check if puzzle was just solved — unlock the door
-            Room* room = terminal.getGameState().getRoom("room_01");
+            Room* room = terminal.getGameState().getRoom("challenge1");
             bool doorUnlocked = room && room->doorUnlocked;
 
             if (hitDoor && doorUnlocked) {
                 DrawText("SUCCESS, door is open.", 10, 110, 20, DARKGREEN);
+                loadLevelFile("src/assets/rooms/room2.txt", level);
+                showLevelTitle(level.name);
             } else if (hitDoor && !doorUnlocked) {
                 DrawText("Door is locked.", 10, 110, 20, DARKGREEN);
             }
@@ -319,7 +338,7 @@ int main(void) {
             }
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
-                terminal.open("terminalTester");
+                terminal.open("challenge1");
             }
         }
 

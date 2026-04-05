@@ -38,7 +38,7 @@ public:
 
         int index = 1;
         while (true) {
-            std::string id       = "room_" + zeroPad(index, 2);
+            std::string id       = "challenge" + std::to_string(index);
             std::string filePath = roomsDir + "/" + id + ".txt";
 
             Room room;

@@ -1,0 +1,11 @@
+Why does it keep crashing!?!?!? Fix it!!! (type help for help)
+crash.py
+Maybe look at the files available? Edit the file?
+ls nano help hint run exit
+dp
+3
+while (true):
+       if goingToCrash:
+                 _
+crash !crash
+!crash

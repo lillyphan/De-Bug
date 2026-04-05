@@ -10,7 +10,7 @@
 ComputerTerminal::ComputerTerminal()
     : openFlag(false),
     terminalFont(LoadFont("src/assets/fonts/terminal.ttf")) {
-    PuzzleLoader::loadAll(gameState, "src/assets/rooms", "src/assets/commands.txt");
+    PuzzleLoader::loadAll(gameState, "src/assets/puzzles", "src/assets/commands.txt");
 }
 
 void ComputerTerminal::rebuildPuzzleFiles() {
