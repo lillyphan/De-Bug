@@ -370,6 +370,8 @@ int main(void) {
 
     int currentLevel = 1;
 
+    Color screenColor = RED;
+
     while (!WindowShouldClose()) {
         statusText.clear();
 
@@ -495,6 +497,12 @@ int main(void) {
             Room* room = terminal.getGameState().getRoom(roomId);
             bool doorUnlocked = room && room->doorUnlocked;
 
+            if (doorUnlocked) {
+                screenColor = GREEN;
+            } else {
+                screenColor = RED;
+            }
+
             if (hitDoor && doorUnlocked) {
                 currentLevel++;
                 string nextFile = "src/assets/rooms/room" + to_string(currentLevel) + ".txt";
@@ -619,7 +627,7 @@ int main(void) {
                 (Vector3){ 0.0f, 1.0f, 0.0f },
                 computerRot,
                 (Vector3){ 1.0f, 1.0f, 1.0f },
-                GREEN
+                screenColor
             );
 
             DrawCubeV(level.door.position, level.door.size, BLUE);
