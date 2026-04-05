@@ -1,6 +1,5 @@
 # De-Bug
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![C++](https://img.shields.io/badge/language-C%2B%2B-blue.svg)
 ![Library](https://img.shields.io/badge/library-raylib-green.svg)
 
@@ -17,15 +16,21 @@ $$$$$$$  |$$$$$$$$\\$$$$$$$   |\\$$$$$$  |\\$$$$$$   |
 \\_______/ \\________|\\______/   \\______/  \\______/
 ```
 
-### 🕹️ The Premise
+### The Premise
 
-You aren't just playing a game—you are the error in the system. You play as a tiny, wandering bug trapped within a vast, interconnected computer network. To escape the system and reach the next room, you must navigate through complex digital landscapes and interact with a terminal to solve programming challenges.
+You play as a tiny, wandering bug trapped within a interconnected computer network. To escape the system and reach the next room, you must navigate through complex digital landscapes and interact with a terminal to solve programming challenges.
 
 Fix the code, jump the gaps, and debug your way to freedom.
 
 ---
 
-### 🚀 Features
+### About the Game
+
+We built a 3D platformer/puzzle solving game from scratch in C++ using raylib where levels are fully data-driven through a custom level loader system. Rather than hardcoding environments and challenges, the game reads structured text files to dynamically generate platforms, objects, and interactions. This makes it easy to design and iterate on levels without have to touch the core code. Furthermore, there is a focus on the command line which is implemented by a computer which is accessed by the user to complete challenges and be able to move on to the following levels.
+
+---
+
+### Features
 
 - **Platforming Mechanics:** Navigate through a series of procedurally inspired digital levels, jumping between floating platforms and navigating terminal hardware.
 - **Terminal-Based Puzzles:** Use an in-game terminal to solve logic and programming-based problems to unlock doors and progress.
@@ -34,20 +39,19 @@ Fix the code, jump the gaps, and debug your way to freedom.
 
 ---
 
-### 🎮 Controls
+### Controls
 
-| Action                     | Key                    |
-| :------------------------- | :--------------------- |
-| **Move**                   | `WASD` or `Arrow Keys` |
-| **Jump**                   | `Space`                |
-| **Interact with Terminal** | `E` or `Enter`         |
-| **Type in Terminal**       | `Keyboard`             |
+| Action                     | Key                           |
+| :------------------------- | :---------------------------- |
+| **Move**                   | `WASD`                        |
+| **Jump**                   | `Space`                       |
+| **Interact with Terminal** | `E` when in front of terminal |
 
 _(Note: Customize these keys based on your actual implementation)_
 
 ---
 
-### 🛠️ Installation & Building
+### Installation & Building
 
 #### **Prerequisites**
 
@@ -103,14 +107,8 @@ Or use the provided helper script:
 
 ---
 
-### 🛠️ Tech Stack
+### Tech Stack
 
 - **Language:** C++
 - **Graphics Library:** [raylib](https://www.raylib.com/)
 - **Build System:** CMake
-
----
-
-### 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
