@@ -18,6 +18,7 @@ int main()
 
     // --- Load everything into GameState ---
     GameState gameState;
+    Font terminalFont = LoadFont("src/assets/fonts/terminal.ttf");
     PuzzleLoader::loadAll(gameState, "src/assets/rooms", "src/assets/commands.txt");
     gameState.activeRoomId        = "room_01";
     gameState.player.currentRoomId = "room_01";
@@ -36,7 +37,7 @@ int main()
 
     // --- Set up parser and terminal ---
     CommandParser  parser(gameState);
-    CommandPrompt  commandPrompt(parser, &puzzleFiles);
+    CommandPrompt  commandPrompt(parser, &puzzleFiles, terminalFont);
 
     // Active editor — null when CommandPrompt is showing
     std::unique_ptr<Terminal> activeEditor = nullptr;
@@ -70,9 +71,9 @@ int main()
                 for (auto& pf : puzzleFiles) {
                     if (pf.name == fname) {
                         if (pf.type == FileType::Dropdwn)
-                            activeEditor = std::make_unique<Dropdwn>(&pf);
+                            activeEditor = std::make_unique<Dropdwn>(&pf, terminalFont);
                         else
-                            activeEditor = std::make_unique<Typing>(&pf);
+                            activeEditor = std::make_unique<Typing>(&pf, terminalFont);
                         break;
                     }
                 }
