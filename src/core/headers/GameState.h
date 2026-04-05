@@ -5,17 +5,6 @@
 #include "PuzzleType.h"
 
 // -------------------------------------------------------
-// RoomObject — a thing in the room that can change state
-// -------------------------------------------------------
-struct RoomObject {
-    std::string id;  // e.g. "door_01", "platform_a"
-    std::string type;  // "door", "platform", "wall", "switch"
-    bool active; // visible / enabled
-    bool passable; // can the player walk through it?
-    float posX, posY, posZ;
-};
-
-// -------------------------------------------------------
 // PuzzleState — tracks one puzzle's progress
 // -------------------------------------------------------
 enum class PuzzleStatus {
@@ -38,10 +27,8 @@ struct Dropdown {
 };
 
 struct PuzzleState {
-    std::string id;
     PuzzleStatus status = PuzzleStatus::Locked; // start as locked
     PuzzleType type = PuzzleType::Typing;
-    int attempts = 0;
 
     std::vector<Dropdown> dropdowns;    // one per dropdown widget, in order
     std::vector<std::string> correctSequence; //correct sequence of dropdown buttons
@@ -73,15 +60,7 @@ struct Room {
     std::string name;
     bool doorUnlocked = false;
 
-    std::vector<RoomObject> objects;
     PuzzleState puzzle; // one puzzle per room
-
-    //convenience helpers
-    RoomObject* findObject(const std::string& objId) {
-        for (auto& obj : objects)
-            if (obj.id == objId) return &obj;
-        return nullptr;
-    }
 
     //check is the puzzle is solved
     bool isPuzzleSolved() const {
@@ -90,25 +69,12 @@ struct Room {
 };
 
 // -------------------------------------------------------
-// PlayerState — where the player is and what they've done
-// -------------------------------------------------------
-struct PlayerState {
-    //maybe get this from raylib
-    float posX = 0.f, posY = 0.f, posZ = 0.f;
-
-    std::string currentRoomId;
-    bool terminalOpen = false;  //is the CLI overlay active?
-};
-
-// -------------------------------------------------------
 // GameState — idk important or something
 // -------------------------------------------------------
 struct GameState {
-    PlayerState                              player;
     std::unordered_map<std::string, Room>    rooms;
     std::unordered_map<std::string, std::string>    commandDescriptions;
     std::string                              activeRoomId;
-    int                                      currentLevel = 0;
 
     // ****************** Room access helpers ******************
 
@@ -141,32 +107,5 @@ struct GameState {
         
         if (!submittedCode.empty())
             room->puzzle.playerCode = submittedCode;
-    }
-
-    // ****************** Navigation ******************
-
-    //returns false if the door isn't unlocked yet
-    bool tryAdvanceRoom(const std::string& nextRoomId) {
-        Room* room = currentRoom();
-        if (!room || !room->doorUnlocked) return false;
-
-        activeRoomId          = nextRoomId;
-        player.currentRoomId  = nextRoomId;
-        return true;
-    }
-
-    //object mutation (called by EventBus listeners)
-    void setObjectPassable(const std::string& objId, bool passable) {
-        Room* room = currentRoom();
-        if (!room) return;
-        RoomObject* obj = room->findObject(objId);
-        if (obj) obj->passable = passable;
-    }
-
-    void setObjectActive(const std::string& objId, bool active) {
-        Room* room = currentRoom();
-        if (!room) return;
-        RoomObject* obj = room->findObject(objId);
-        if (obj) obj->active = active;
     }
 };
