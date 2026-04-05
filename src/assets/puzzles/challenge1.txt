@@ -1,11 +1,10 @@
-Seems like the door is stuck, Complete and run the code to advance! (type help for help)
-door
+Complete and run the code to advance! (type help for help)
+door.py
 ls lets you see available files and nano <file name> lets you edit files!
 ls nano help hint run exit
 dp
-3
-while(true)
-    if openDoor:
-       _
+2
+if (doorLocked ==    _  ):
+    unlockDoor();
 False True
 True

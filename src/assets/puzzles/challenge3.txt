@@ -1,6 +1,6 @@
-These two are not connecting, so annoying
+I believe I can fly.
 concat.py
-string additionnn
+Tie two ends together.
 ls nano help hint run exit
 tp
 5

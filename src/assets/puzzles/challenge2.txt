@@ -1,8 +1,8 @@
-Back to the good old days (type help for help)
-starter.py
-Most popular line of code
+Back to basics. (type help for help)
+hello.py
+The most popular line of code.
 ls nano help hint run exit
 tp
 1
-print("Hello _!")
+print("Hello _ !")
 world
