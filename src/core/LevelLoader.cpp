@@ -299,6 +299,20 @@ bool loadLevelFile(const std::string& filename, LevelData& level) {
                 continue;
             }
         }
+        else if (type == "Paper" || type == "paper") {
+            PaperObject paper;
+            std::string colorToken;
+
+            if (!(iss >> paper.position.x >> paper.position.y >> paper.position.z
+                      >> paper.size.x >> paper.size.y >> paper.size.z
+                      >> colorToken)) {
+                std::cerr << "Invalid Paper line: " << line << '\n';
+                continue;
+            }
+
+            paper.color = parseColor(colorToken);
+            level.papers.push_back(paper);
+        }
         else if (type == "BridgeBox" || type == "bridgebox") {
             BridgeBoxObject bridge;
             std::string colorToken;

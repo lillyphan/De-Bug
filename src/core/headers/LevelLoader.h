@@ -15,9 +15,13 @@ struct BridgeBoxObject {
     Vector3 position;
     Vector3 size;
     Color   color;
-    // runtime state for spawn animation
-    float spawnStartTime = -1.0f;  // set when bridge starts rising
-    float spawnFromY     = 0.0f;   // Y position it rises from
+};
+
+struct PaperObject {
+    Vector3 position;
+    Vector3 size;   // actual box dimensions from the level file
+    Color   color;
+    bool    collected = false;
 };
 
 struct PlaneObject {
@@ -103,6 +107,7 @@ struct LevelData {
 
     std::vector<BoxObject> boxes;
     std::vector<BridgeBoxObject> bridgeBoxes;  // hidden until puzzle solved
+    std::vector<PaperObject>     papers;       // collectible items
     std::vector<PlaneObject> planes;
     std::vector<SphereObject> spheres;
     std::vector<CylinderExObject> cylinders;

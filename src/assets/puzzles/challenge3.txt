@@ -1,4 +1,4 @@
-I believe I can fly.
+I believe I can fly. (type help for help)
 concat.py
 Tie two ends together.
 ls nano help hint run exit
