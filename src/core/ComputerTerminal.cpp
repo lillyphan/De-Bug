@@ -68,6 +68,11 @@ void ComputerTerminal::update() {
             Room* room = gameState.currentRoom();
             if (room) {
                 for (auto& pf : puzzleFiles) {
+                    std::cout << "saved: " << pf.saved << "\n";
+                    std::cout << "typingSavedAnswers size: " 
+                            << pf.typingSavedAnswers.size() << "\n";
+                    for (auto& a : pf.typingSavedAnswers)
+                        std::cout << "  answer: '" << a << "'\n";
                     pf.syncToPuzzleState(room->puzzle);
                 }
             }

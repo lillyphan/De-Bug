@@ -359,7 +359,6 @@ int main(void) {
 
             // Check if puzzle was just solved — unlock the door
             std::string roomId = "challenge" + std::to_string(currentLevel);
-            std::cout << "checking roomId: " << roomId << "\n";
             Room* room = terminal.getGameState().getRoom(roomId);
             bool doorUnlocked = room && room->doorUnlocked;
 

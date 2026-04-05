@@ -2,9 +2,10 @@ Why does it keep crashing!?!?!? Fix it!!! (type help for help)
 crash.py
 Maybe look at the files available? Edit the file?
 ls nano help hint run exit
-tp
+dp
 3
-codeline1
-codeline2  _  codeline3
-codeline4
-solution
+while (true):
+       if goingToCrash:
+                 _
+crash !crash
+!crash

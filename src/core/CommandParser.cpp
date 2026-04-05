@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <iostream>
 
 // -------------------------------------------------------
 // Public entry point
@@ -135,7 +136,7 @@ CommandResult CommandParser::handleRun(const std::string &playerCode, const std:
             }
         }
     }
-
+    
     //pass to the puzzleEngine to validate the result
     PuzzleEngine engine(m_state); //puzzle engine according to the room (state)
     bool correct = engine.validate(ps, ps.type);

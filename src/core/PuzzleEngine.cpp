@@ -21,6 +21,7 @@ bool PuzzleEngine::validate(const PuzzleState& ps, PuzzleType type)
 // -------------------------------------------------------
 bool PuzzleEngine::validateCode(const PuzzleState& ps)
 {
+    std::cout << "PLAYERCODE:" << ps.playerCode;
     return normalise(ps.playerCode) == normalise(ps.correctCode);
 }
 
