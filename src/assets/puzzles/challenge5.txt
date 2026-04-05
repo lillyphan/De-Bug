@@ -1,0 +1,19 @@
+(type help for help)
+status.py
+Alive and dead.
+ls nano help hint run exit
+dp
+11
+$ ls
+Schrodingers.txt    experiment-log.md    quantum-notes.py
+
+$ cat _
+# Schrodinger's Cat Experiment - Lab Notes
+Date: Unknown
+
+The cat has been placed in the box.
+Poison mechanism: armed.
+Observation status: PENDING
+$
+experiment_log.md quantum_notes.py Schrodingers.txt
+Schrodingers.txt

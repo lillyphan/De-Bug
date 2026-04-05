@@ -1,0 +1,9 @@
+Update file status. (type help for help)
+status.py
+Let the system know you found the file.
+ls nano help hint run exit
+dp
+1
+system.FileNotFound.status = _
+Status.Error Status.Resolved
+Status.Resolved

@@ -536,6 +536,14 @@ int main(void) {
         BoundingBox computerBox = getComputerBounds(level);
         BoundingBox doorBox = getDoorBounds(level);
 
+        // Check paper collection
+        bool allPapersCollected = level.papers.empty();  // true if no papers in level
+        if (!allPapersCollected) {
+            allPapersCollected = true;
+            for (auto& paper : level.papers)
+                if (!paper.collected) { allPapersCollected = false; break; }
+        }
+
         if (terminal.isOpen()) {
             terminal.update();
         } else {
@@ -679,7 +687,6 @@ int main(void) {
                 PlaySound(doorSound);
                 std::string nextFile = "src/assets/rooms/room" + std::to_string(currentLevel) + ".txt";
                 if (!loadLevelFile(nextFile, level)) {
-                    statusText = "You win!";
                     currentLevel--;
                 } else {
                     showLevelTitle(level.name);
@@ -711,9 +718,23 @@ int main(void) {
                 collisionText = "Colliding with: none";
             }
 
+            // Paper pickup
+            for (auto& paper : level.papers) {
+                if (paper.collected) continue;
+                BoundingBox paperBox = makeBoundingBox(paper.position, paper.size);
+                if (isTouchingBox(playerBox, paperBox)) {
+                    paper.collected = true;
+                    statusText = "Picked up a file!";
+                }
+            }
+
             if (hitComputer && IsKeyPressed(KEY_E)) {
-                PlaySound(computerSound);
-                terminal.open(roomId);
+                if (!allPapersCollected) {
+                    statusText = "Find the file first.";
+                } else {
+                    PlaySound(computerSound);
+                    terminal.open(roomId);
+                }
             }
         }
 
@@ -776,6 +797,15 @@ int main(void) {
                     DrawCubeV(box.position, box.size, box.color);
                     DrawCubeWiresV(box.position, box.size, BLACK);
                 }
+            }
+
+            // Draw uncollected papers with bob animation
+            for (auto& paper : level.papers) {
+                if (paper.collected) continue;
+                float bob = sinf((float)GetTime() * 2.0f) * 0.3f;
+                Vector3 drawPos = { paper.position.x, paper.position.y + bob, paper.position.z };
+                DrawCubeV(drawPos, paper.size, paper.color);
+                DrawCubeWiresV(drawPos, paper.size, LIGHTGRAY);
             }
 
             // Draw bridge with rise animation
@@ -870,9 +900,11 @@ int main(void) {
 
             // Render HUD over Post-Processing as GREEN for ASCII visibility
             DrawFPS(10, 10);
-            DrawText(collisionText.c_str(), 10, 35, 20, GREEN);
-            DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, GREEN);
-            DrawText("WASD move | SPACE jump | E use computer", 10, 85, 20, GREEN);
+            // DrawText(collisionText.c_str(), 10, 35, 20, GREEN);
+            // DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, GREEN);
+            string roomId = "challenge" + to_string(currentLevel);
+            if (roomId == "challenge1")
+            DrawText("WASD move | SPACE jump | SHIFT sprint | CTRL sneak | E use computer", 20, 655, 20, WHITE);
 
             if (!statusText.empty()) {
                 DrawText(statusText.c_str(), 10, 110, 20, DARKGREEN);
@@ -880,7 +912,11 @@ int main(void) {
 
             BoundingBox playerBox = makePlayerBox(bugPos);
             if (isTouchingBox(playerBox, computerBox)) {
-                DrawText("Press E to use computer", 10, 135, 20, GREEN);
+                if (!allPapersCollected && roomId == "challenge4") {
+                    DrawText("FileNotFound. Cannot access computer.", 10, 35, 20, WHITE);
+                } else {
+                    DrawText("Press E to use computer", 10, 35, 20, WHITE);
+                }
             }
         }
 

@@ -117,12 +117,12 @@ void CommandPrompt::processInput(const std::string& text)
         for (auto& line : result.lines)
             log.push_back(line);
 
-        if (result.solved)
-            log.push_back("Correct! The door is now unlocked.");
-        else if (!result.lines.empty())
-            ;// error message already pushed
-        else
-            log.push_back(f->name + " output is incorrect.");
+        // if (result.solved)
+        //     log.push_back("Correct! The door is now unlocked.");
+        // else if (!result.lines.empty())
+        //     ;// error message already pushed
+        // else
+        //     log.push_back(f->name + " output is incorrect.");
 
         return;
     }
