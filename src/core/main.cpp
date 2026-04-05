@@ -310,13 +310,7 @@ int main(void) {
     SetTargetFPS(fps);
 
     const char* title =
-        "  ____  U _____ u  ____     _   _    ____   \n"
-        " |  _\"\\  \\| ___\"|/ |  _\"\\  | | | |  / __\"| \n"
-        "/| | | |  |  _|\"  /| | | | | |_| | <\\___ \\ \n"
-        "U| |_| |\\ | |___  U| |_| |\\|_   _|  u___) |\n"
-        " |____/ u |_____|  |____/ u  |_|    |____/ u\n"
-        "  |||_   <<   >>    |||_  .-,//|(_   )(  (( \n"
-        " (__)_) (__) (__)  (__)_)  \\_)-'_/  (__)  ) \n";
+        "$$$$$$$\\\\ $$$$$$$$\\\\$$$$$$$\\\\  $$\\\\  $$\\\\  $$$$$$\\\\\n$$  __$$\\\\$$  _____|$$  __$$\\\\ $$ |  $$ |$$  __ $$\\\\\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ /  \\\\__|\n$$ |  $$ |$$$$$\\\\   $$$$$$$\\\\ |$$ |  $$ |$$ |  $$$$\\\\\n$$ |  $$ |$$  __|   $$  __$$\\\\ $$ |  $$ |$$ |  \\\\_$$ |\n$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ |     $$ |\n$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$   |\n\\\\_______/ \\\\________|\\\\______/   \\\\______/  \\\\______/";
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_ENTER)) break;
@@ -324,30 +318,49 @@ int main(void) {
         BeginDrawing();
             ClearBackground(BLACK);
 
-            int lineHeight = 18;
-            int fontSize   = 16;
-            int y          = GetScreenHeight()/2 - 80;
+            int lineHeight    = 18;
+            int titleFontSize = 16;
 
-            const char* ptr = title;
-            char lineBuf[128];
-            int lineIndex = 0;
-            while (*ptr) {
-                int len = 0;
-                while (*ptr && *ptr != '\n') {
-                    lineBuf[len++] = *ptr++;
+            // Emulate a monospaced font by forcing a fixed width based on the '$' character
+            int fixedCharWidth = MeasureText("/", titleFontSize);
+
+            // Calculate max columns to perfectly center the entire block on the screen
+            int maxCols = 0;
+            int currentCols = 0;
+            for (const char* p = title; *p != '\0'; p++) {
+                if (*p == '\n') {
+                    if (currentCols > maxCols) maxCols = currentCols;
+                    currentCols = 0;
+                } else {
+                    currentCols++;
                 }
-                lineBuf[len] = '\0';
-                if (*ptr == '\n') ptr++;
+            }
+            if (currentCols > maxCols) maxCols = currentCols;
 
-                int x = GetScreenWidth()/2 - MeasureText(lineBuf, fontSize)/2;
-                DrawText(lineBuf, x, y + lineIndex * lineHeight, fontSize, GREEN);
-                lineIndex++;
+            int startX = GetScreenWidth() / 2 - (maxCols * fixedCharWidth) / 2;
+            int y = GetScreenHeight() / 2 - 80;
+
+            // Draw character by character on our rigid grid
+            int row = 0;
+            int col = 0;
+            for (const char* p = title; *p != '\0'; p++) {
+                if (*p == '\n') {
+                    row++;
+                    col = 0;
+                } else {
+                    // Only draw visible characters; we let the space just advance the column
+                    if (*p != ' ') {
+                        char cStr[2] = { *p, '\0' };
+                        DrawText(cStr, startX + col * fixedCharWidth, y + row * lineHeight, titleFontSize, GREEN);
+                    }
+                    col++;
+                }
             }
 
             if ((int)(GetTime() * 2) % 2 == 0) {
                 DrawText("press enter to play",
-                    GetScreenWidth()/2 - MeasureText("press enter to play", 18)/2,
-                    GetScreenHeight()/2 + 60,
+                    GetScreenWidth() / 2 - MeasureText("press enter to play", 18) / 2,
+                    GetScreenHeight() / 2 + 80,
                     18, DARKGREEN);
             }
         EndDrawing();
