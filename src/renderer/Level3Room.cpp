@@ -3,6 +3,7 @@
 #include <vector>
 #include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
 
 using namespace std;
 
@@ -34,19 +35,26 @@ struct Platform {
     Color color;
 };
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
+void drawRotatedBox(Vector3 position, Vector3 size, float rotationDegrees,
+                    Color fillColor, Color wireColor) {
+    rlPushMatrix();
+    rlTranslatef(position.x, position.y, position.z);
+    rlRotatef(rotationDegrees, 0.0f, 1.0f, 0.0f);
+
+    DrawCubeV({ 0.0f, 0.0f, 0.0f }, size, fillColor);
+    DrawCubeWiresV({ 0.0f, 0.0f, 0.0f }, size, wireColor);
+
+    rlPopMatrix();
+}
+
 int main(void) {
-    // Initialization
     const int screenWidth = 800;
     const int screenHeight = 450;
     const int fps = 60;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(screenWidth, screenHeight, "De-Bug Level 2");
+    InitWindow(screenWidth, screenHeight, "De-Bug Level 4");
 
-    // Camera
     Camera3D camera = { 0 };
     camera.position = (Vector3){ 0.0f, 15.0f, 10.0f };
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
@@ -54,27 +62,26 @@ int main(void) {
     camera.fovy = 75.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    // Player starts near front-right of room
-    Vector3 bugPos = { 32.0f, -48.0f, 28.0f };
+    Vector3 bugPos = { -34.0f, -48.0f, -18.0f };
     Vector3 camPos = { 0.0f, 30.0f, 55.0f };
 
     float bugSpeed = 0.15f * (60.0f / (float)fps);
     float diagBugSpeed = sqrt(0.5f * bugSpeed * bugSpeed);
 
-    // Level 2 platforms
-    // path: front-right -> middle/back -> back-left/high -> right/top platform
     vector<Platform> platforms = {
-        {{  28.0f, -40.0f,  22.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{   8.0f, -28.0f,   2.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{ -16.0f, -16.0f, -20.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{  16.0f,  -4.0f, -30.0f }, { 16.0f, 2.0f, 16.0f }, DARKGRAY}
+        // platform 1: back-left lower platform
+        {{ -30.0f, -42.0f, -24.0f }, { 18.0f, 2.0f, 10.0f }, DARKGRAY},
+
+        // platform 2: slightly higher and to the right
+        {{ -10.0f, -34.0f, -12.0f }, { 18.0f, 2.0f, 10.0f }, DARKGRAY},
+
+        // platform 3: final square platform under bridge end
+        {{  27.0f, -34.0f,  18.0f }, { 16.0f, 2.0f, 16.0f }, DARKGRAY}
     };
 
     SetTargetFPS(fps);
 
-    // Main game loop
     while (!WindowShouldClose()) {
-        // Update
         float currBugSpeed = bugSpeed
             - (IsKeyDown(KEY_LEFT_SHIFT) * bugSpeed * 1 / 2)
             + (IsKeyDown(KEY_LEFT_CONTROL) * bugSpeed);
@@ -112,35 +119,57 @@ int main(void) {
         camera.position = currCamPos;
         camera.target = (Vector3){ bugPos.x, bugPos.y + 8.0f, bugPos.z - 10.0f };
 
-        // Draw
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
         BeginMode3D(camera);
 
-        // Room bounds
         DrawCubeWiresV({ 0, 0, 0 }, { 100, 100, 100 }, BLACK);
         DrawCubeWiresV({ 0, 0, 0 }, { 200, 200, 200 }, RED);
 
-        // Floor
         DrawPlane({ 0, -50, 0 }, { 100, 100 }, GRAY);
         DrawPlane({ 0, -50, 75 }, { 100, 50 }, GRAY);
 
-        // Platforms
         for (const Platform &platform : platforms) {
             DrawCubeV(platform.position, platform.size, platform.color);
             DrawCubeWiresV(platform.position, platform.size, BLACK);
         }
 
-        // Computer on last platform
-        DrawCubeV({ 12.0f, -2.25f, -30.0f }, { 2.0f, 1.5f, 1.5f }, BLACK);
-        DrawCubeWiresV({ 12.0f, -2.25f, -30.0f }, { 2.0f, 1.5f, 1.5f }, WHITE);
+        // one large bridge platform, rotated in the \ direction
+        drawRotatedBox(
+            { 9.0f, -31.5f, 1.5f },
+            { 38.0f, 1.0f, 7.0f },
+            -32.0f,
+            DARKBROWN,
+            BLACK
+        );
 
-        // Door to the right of the computer
-        DrawCubeV({ 22.0f, 1.0f, -30.0f }, { 4.0f, 8.0f, 1.5f }, BLUE);
-        DrawCubeWiresV({ 22.0f, 1.0f, -30.0f }, { 4.0f, 8.0f, 1.5f }, BLACK);
+        // left railing
+        drawRotatedBox(
+            { 10.5f, -29.8f, -1.8f },
+            { 38.0f, 1.6f, 0.8f },
+            -32.0f,
+            BROWN,
+            BLACK
+        );
 
-        // Player
+        // right railing
+        drawRotatedBox(
+            { 7.5f, -29.8f, 4.8f },
+            { 38.0f, 1.6f, 0.8f },
+            -32.0f,
+            BROWN,
+            BLACK
+        );
+
+        // computer on platform 2
+        DrawCubeV({ -16.0f, -32.25f, -15.0f }, { 2.0f, 1.5f, 1.5f }, BLACK);
+        DrawCubeWiresV({ -16.0f, -32.25f, -15.0f }, { 2.0f, 1.5f, 1.5f }, WHITE);
+
+        // door on platform 3
+        DrawCubeV({ 33.0f, -28.0f, 12.0f }, { 4.0f, 8.0f, 1.5f }, BLUE);
+        DrawCubeWiresV({ 33.0f, -28.0f, 12.0f }, { 4.0f, 8.0f, 1.5f }, BLACK);
+
         DrawSphere(bugPos, 2, BROWN);
 
         EndMode3D();
@@ -149,8 +178,6 @@ int main(void) {
         EndDrawing();
     }
 
-    // De-Initialization
     CloseWindow();
-
     return 0;
 }

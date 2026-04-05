@@ -44,7 +44,7 @@ int main(void) {
     const int fps = 60;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(screenWidth, screenHeight, "De-Bug Level 2");
+    InitWindow(screenWidth, screenHeight, "De-Bug");
 
     // Camera
     Camera3D camera = { 0 };
@@ -54,20 +54,20 @@ int main(void) {
     camera.fovy = 75.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    // Player starts near front-right of room
-    Vector3 bugPos = { 32.0f, -48.0f, 28.0f };
+    // Player and camera offset
+    Vector3 bugPos = { -38.0f, -48.0f, -18.0f };
     Vector3 camPos = { 0.0f, 30.0f, 55.0f };
 
     float bugSpeed = 0.15f * (60.0f / (float)fps);
     float diagBugSpeed = sqrt(0.5f * bugSpeed * bugSpeed);
 
-    // Level 2 platforms
-    // path: front-right -> middle/back -> back-left/high -> right/top platform
+    // Level 1 platforms
+    // bottom-left to top-right staircase path
     vector<Platform> platforms = {
-        {{  28.0f, -40.0f,  22.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{   8.0f, -28.0f,   2.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{ -16.0f, -16.0f, -20.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
-        {{  16.0f,  -4.0f, -30.0f }, { 16.0f, 2.0f, 16.0f }, DARKGRAY}
+        {{ -32.0f, -42.0f, -24.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
+        {{ -10.0f, -30.0f, -30.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
+        {{  12.0f, -18.0f, -36.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY},
+        {{  30.0f,  -6.0f, -42.0f }, { 14.0f, 2.0f, 14.0f }, DARKGRAY}
     };
 
     SetTargetFPS(fps);
@@ -132,13 +132,9 @@ int main(void) {
             DrawCubeWiresV(platform.position, platform.size, BLACK);
         }
 
-        // Computer on last platform
-        DrawCubeV({ 12.0f, -2.25f, -30.0f }, { 2.0f, 1.5f, 1.5f }, BLACK);
-        DrawCubeWiresV({ 12.0f, -2.25f, -30.0f }, { 2.0f, 1.5f, 1.5f }, WHITE);
-
-        // Door to the right of the computer
-        DrawCubeV({ 22.0f, 1.0f, -30.0f }, { 4.0f, 8.0f, 1.5f }, BLUE);
-        DrawCubeWiresV({ 22.0f, 1.0f, -30.0f }, { 4.0f, 8.0f, 1.5f }, BLACK);
+        // Door on the top-right platform
+        DrawCubeV({ 36.0f, -1.0f, -42.0f }, { 4.0f, 8.0f, 1.5f }, BLUE);
+        DrawCubeWiresV({ 36.0f, -1.0f, -42.0f }, { 4.0f, 8.0f, 1.5f }, BLACK);
 
         // Player
         DrawSphere(bugPos, 2, BROWN);
