@@ -1,0 +1,12 @@
+These two are not connecting, so annoying
+concat.py
+string additionnn
+ls nano help hint run exit
+tp
+5
+word1 = "tie"
+word2 = "strings"
+ 
+bridge = word1 _ word2
+print(bridge)
++

@@ -1,11 +1,11 @@
-Why does it keep crashing!?!?!? Fix it!!! (type help for help)
-crash.py
-Maybe look at the files available? Edit the file?
+Seems like the door is stuck, Complete and run the code to advance! (type help for help)
+door
+ls lets you see available files and nano <file name> lets you edit files!
 ls nano help hint run exit
 dp
-3
-while (true):
-       if goingToCrash:
-                 _
-crash !crash
-!crash
+4
+while(true)
+    if openDoor:
+       _
+False True
+True

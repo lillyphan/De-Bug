@@ -1,10 +1,8 @@
-Why does it keep crashing!?!?!? Fix it!!! (type help for help)
-crash.py
-Maybe look at the files available? Edit the file?
+Back to the good old days (type help for help)
+starter.py
+Most popular line of code
 ls nano help hint run exit
 tp
-3
-codeline1
-codeline2  _  codeline3
-codeline4
-solution
+1
+print("Hello _!")
+world
