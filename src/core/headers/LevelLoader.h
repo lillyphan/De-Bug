@@ -28,6 +28,7 @@ struct LevelData {
 
     std::vector<BoxObject> boxes;
     std::vector<PlaneObject> planes;
+    std::string name;
 };
 
 // Fixed dimensions for special objects

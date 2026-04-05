@@ -52,6 +52,13 @@ bool loadLevelFile(const std::string& filename, LevelData& level) {
 
     std::string line;
 
+      // Line 1: level name
+    if (!std::getline(file, line)) {
+        std::cerr << "Missing level name line.\n";
+        return false;
+    }
+    level.name = line;
+
     // Line 1: computer position
     if (!std::getline(file, line) || !parseVector3Line(line, level.computer.position)) {
         std::cerr << "Invalid computer position line.\n";
