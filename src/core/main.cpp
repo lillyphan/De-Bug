@@ -486,6 +486,10 @@ int main(void) {
 
     int currentLevel = 1;
 
+    bool bridgeSpawned = false;
+    float bridgeSpawnTime = 0.0f;
+    const float BRIDGE_RISE_DURATION = 1.5f;
+
     Color screenColor = RED;
 
     while (!WindowShouldClose()) {
