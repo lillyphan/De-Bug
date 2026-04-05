@@ -1,5 +1,5 @@
 (type help for help)
-status.py
+physics.py
 Alive and dead.
 ls nano help hint run exit
 dp
