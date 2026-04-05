@@ -7,6 +7,11 @@
 #include "raymath.h"
 #include "rlgl.h"
 
+// Shader & Lighting
+#define RLIGHTS_IMPLEMENTATION
+#include "headers/rlights.h"
+#define GLSL_VERSION 330
+
 #include "headers/LevelLoader.h"
 #include "headers/ComputerTerminal.h"
 
@@ -370,7 +375,7 @@ int main(void) {
     float diagMoveSpeed = sqrt(0.5f) * moveSpeed;
 
     float verticalVelocity = 0.0f;
-    const float gravity = 0.015f * (60.0f / (float)fps);
+    const float gravity = 0.017f * (60.0f / (float)fps);
     const float jumpStrength = 0.76f * (60.0f / (float)fps);
     bool onGround = true;
 
@@ -381,6 +386,40 @@ int main(void) {
 
     SetTargetFPS(fps);
 
+    // ---------------------------------------------------------------------------------
+    // Shaders Setup
+    // ---------------------------------------------------------------------------------
+    Shader lightShader = LoadShader(
+        "src/assets/shaders/lighting.vs",
+        "src/assets/shaders/lighting.fs"
+    );
+    lightShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(lightShader, "viewPos");
+    int ambientLoc = GetShaderLocation(lightShader, "ambient");
+    float ambient[4] = { 0.6f, 0.6f, 0.6f, 1.0f };
+    SetShaderValue(lightShader, ambientLoc, ambient, SHADER_UNIFORM_VEC4);
+
+    Light sunLight = CreateLight(LIGHT_DIRECTIONAL, (Vector3){ 50, 50, 50 }, (Vector3){ 0, 0, 0 }, (Color){ 255, 240, 200, 255 }, lightShader);
+    Light fillLight = CreateLight(LIGHT_POINT, (Vector3){ -30, 20, -30 }, (Vector3){ 0, 0, 0 }, (Color){ 60, 70, 120, 255 }, lightShader);
+
+    // APPLY SHADER TO LOADED MODELS ONLY
+    computerModel.materials[0].shader = lightShader;
+    computerScreenModel.materials[0].shader = lightShader;
+    bugModel.materials[0].shader = lightShader;
+
+    // ASCII post-processing shader
+    Shader asciiShader = LoadShader(0, TextFormat("src/assets/shaders/ascii.fs", GLSL_VERSION));
+    int resolutionLoc = GetShaderLocation(asciiShader, "resolution");
+    int fontSizeLoc   = GetShaderLocation(asciiShader, "fontSize");
+    float fontSize      = 7.0f;
+    float resolution[2] = { (float)screenWidth, (float)screenHeight };
+
+    SetShaderValue(asciiShader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(asciiShader, fontSizeLoc, &fontSize, SHADER_UNIFORM_FLOAT);
+
+    // Render texture setup
+    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    // ---------------------------------------------------------------------------------
+
     const char* title =
         "$$$$$$$\\\\ $$$$$$$$\\\\$$$$$$$\\\\  $$\\\\  $$\\\\  $$$$$$\\\\\n"
         "$$  __$$\\\\$$  _____|$$  __$$\\\\ $$ |  $$ |$$  __ $$\\\\\n"
@@ -388,8 +427,8 @@ int main(void) {
         "$$ |  $$ |$$$$$\\\\   $$$$$$$\\\\ |$$ |  $$ |$$ |  $$$$\\\\\n"
         "$$ |  $$ |$$  __|   $$  __$$\\\\ $$ |  $$ |$$ |  \\\\_$$ |\n"
         "$$ |  $$ |$$ |      $$ |  $$  |$$ |  $$ |$$ |     $$ |\n"
-        "$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$   |\n"
-        "\\_______/ \\________|\\______/   \\______/  \\______/";
+        "$$$$$$$  |$$$$$$$$\\\\$$$$$$$   |\\\\$$$$$$  |\\\\$$$$$$  |\n"
+        "\\_______/ \\________|\\______/   \\______/  \\________/";
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_ENTER)) {
@@ -451,6 +490,29 @@ int main(void) {
 
     while (!WindowShouldClose()) {
         statusText.clear();
+
+        // Screen resizing & ASCII shader logic updates
+        if (IsWindowResized()) {
+            UnloadRenderTexture(target);
+            target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+            float res[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+            SetShaderValue(asciiShader, resolutionLoc, res, SHADER_UNIFORM_VEC2);
+        }
+
+        if (IsKeyPressed(KEY_LEFT) && fontSize > 3) {
+            fontSize -= 1.0f;
+        }
+        if (IsKeyPressed(KEY_RIGHT) && fontSize < 40) {
+            fontSize += 1.0f;
+        }
+        if (IsKeyPressed(KEY_UP) && camera.fovy > 1) {
+            camera.fovy -= 1.0f;
+        }
+        if (IsKeyPressed(KEY_DOWN) && camera.fovy < 250) {
+            camera.fovy += 1.0f;
+        }
+
+        SetShaderValue(asciiShader, fontSizeLoc, &fontSize, SHADER_UNIFORM_FLOAT);
 
         vector<BoundingBox> platformBounds = buildPlatformBounds(level);
         vector<BoundingBox> solidBounds = buildSolidBounds(level);
@@ -641,13 +703,21 @@ int main(void) {
         camera.position = desiredCamPos;
         camera.target = { bugPos.x, bugPos.y + 1.0f, bugPos.z };
 
+        // Update Shader View Position & Lights
+        float camPosArr[3] = { camera.position.x, camera.position.y, camera.position.z };
+        SetShaderValue(lightShader, lightShader.locs[SHADER_LOC_VECTOR_VIEW], camPosArr, SHADER_UNIFORM_VEC3);
+        UpdateLightValues(lightShader, sunLight);
+        UpdateLightValues(lightShader, fillLight);
+
+        // Rendering Pass
         BeginDrawing();
 
         if (terminal.isOpen()) {
             ClearBackground(BLACK);
             terminal.draw();
         } else {
-            ClearBackground(RAYWHITE);
+            BeginTextureMode(target);
+            ClearBackground(BLACK); // ASCII prefers darker backgrounds
 
             BeginMode3D(camera);
 
@@ -750,11 +820,21 @@ int main(void) {
             );
 
             EndMode3D();
+            EndTextureMode();
 
+            // --- Apply ASCII shader and draw to screen ---
+            ClearBackground(BLACK);
+            BeginShaderMode(asciiShader);
+                DrawTextureRec(target.texture,
+                    (Rectangle){ 0, 0, (float)target.texture.width, (float)-target.texture.height },
+                    (Vector2){ 0, 0 }, WHITE);
+            EndShaderMode();
+
+            // Render HUD over Post-Processing as GREEN for ASCII visibility
             DrawFPS(10, 10);
-            DrawText(collisionText.c_str(), 10, 35, 20, BLACK);
-            DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, BLACK);
-            DrawText("WASD move | SPACE jump | E use computer", 10, 85, 20, BLACK);
+            DrawText(collisionText.c_str(), 10, 35, 20, GREEN);
+            DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, GREEN);
+            DrawText("WASD move | SPACE jump | E use computer", 10, 85, 20, GREEN);
 
             if (!statusText.empty()) {
                 DrawText(statusText.c_str(), 10, 110, 20, DARKGREEN);
@@ -762,7 +842,7 @@ int main(void) {
 
             BoundingBox playerBox = makePlayerBox(bugPos);
             if (isTouchingBox(playerBox, computerBox)) {
-                DrawText("Press E to use computer", 10, 135, 20, DARKGREEN);
+                DrawText("Press E to use computer", 10, 135, 20, GREEN);
             }
         }
 
@@ -780,6 +860,10 @@ int main(void) {
     UnloadModel(computerModel);
     UnloadModel(computerScreenModel);
     UnloadModel(bugModel);
+
+    UnloadShader(lightShader);
+    UnloadShader(asciiShader);
+    UnloadRenderTexture(target);
 
     CloseAudioDevice();
     CloseWindow();
