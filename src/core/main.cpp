@@ -370,7 +370,7 @@ int main(void) {
     float diagMoveSpeed = sqrt(0.5f) * moveSpeed;
 
     float verticalVelocity = 0.0f;
-    const float gravity = 0.015f * (60.0f / (float)fps);
+    const float gravity = 0.017f * (60.0f / (float)fps);
     const float jumpStrength = 0.76f * (60.0f / (float)fps);
     bool onGround = true;
 
