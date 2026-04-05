@@ -50,6 +50,17 @@ int main(void) {
     float camSize[2] = {75, (9/16*75)};
     Vector3 camPos = { 0.0f, 10.0f, 20.0f }; // Delta pos from bug
 
+    Model computerModel = LoadModel("objects/computer.obj");
+    Model computerScreenModel = LoadModel("objects/computer-screen.obj");
+    BoundingBox computerBounds = GetMeshBoundingBox(computerModel.meshes[0]);
+    float computerSize[3] = {
+        computerBounds.max.x - computerBounds.min.x,
+        computerBounds.max.y - computerBounds.min.y,
+        computerBounds.max.z - computerBounds.min.z
+    }; // x, y, z
+    Vector3 computerPos = { 0.0f, (-50.0f+computerSize[1]/2), 0.0f };
+    float computerRot = 180;
+
     Model bugModel = LoadModel("objects/de-bug.obj");
     BoundingBox bugBounds = GetMeshBoundingBox(bugModel.meshes[0]);
     float bugSize[3] = {
@@ -165,6 +176,8 @@ int main(void) {
         DrawPlane({0,-50,75}, {100, 50}, GRAY); // OOB Floor
         //DrawSphere(bugPos, 2, BROWN); //Vector3 centerPos, float radius, Color color
         DrawModelEx(bugModel, bugPos, (Vector3){ 0.0f, 1.0f, 0.0f }, bugRot, (Vector3){ 1.0f, 1.0f, 1.0f }, BROWN);
+        DrawModelEx(computerModel, computerPos, (Vector3){ 0.0f, 1.0f, 0.0f }, computerRot, (Vector3){ 1.0f, 1.0f, 1.0f }, WHITE);
+        DrawModelEx(computerScreenModel, computerPos, (Vector3){ 0.0f, 1.0f, 0.0f }, computerRot, (Vector3){ 1.0f, 1.0f, 1.0f }, GREEN);
 
         EndMode3D();
 
