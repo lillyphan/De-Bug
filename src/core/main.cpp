@@ -11,9 +11,10 @@
 
 using namespace std;
 
-const float PLAYER_RADIUS = 2.0f;
+float PLAYER_RADIUS = 2.0f; // Made variable so it can adapt to the bug model's size
 const float FLOOR_Y = -50.0f;
 
+// Bound position within specific min/max coordinates
 void boundPos(Vector3 &var,
               float xMin, float xMax,
               float yMin, float yMax,
@@ -39,13 +40,11 @@ bool isRoomShellBox(const BoxObject& box) {
 
 vector<BoundingBox> buildPlatformBounds(const LevelData& level) {
     vector<BoundingBox> bounds;
-
     for (const BoxObject& box : level.boxes) {
         if (!isRoomShellBox(box)) {
             bounds.push_back(makeBoundingBox(box.position, box.size));
         }
     }
-
     return bounds;
 }
 
@@ -69,8 +68,7 @@ bool isStandingOnTopOf(const BoundingBox& playerBox, const BoundingBox& box) {
            overlapsHorizontally(playerBox, box);
 }
 
-bool collidesWithSolidSideways(Vector3 pos,
-                               const vector<BoundingBox>& solidBounds) {
+bool collidesWithSolidSideways(Vector3 pos, const vector<BoundingBox>& solidBounds) {
     BoundingBox playerBox = makePlayerBox(pos);
 
     for (const BoundingBox& box : solidBounds) {
@@ -79,10 +77,8 @@ bool collidesWithSolidSideways(Vector3 pos,
         if (isStandingOnTopOf(playerBox, box)) {
             continue;
         }
-
         return true;
     }
-
     return false;
 }
 
@@ -93,15 +89,20 @@ bool isTouchingBox(const BoundingBox& a, const BoundingBox& b, float eps = 0.25f
     return overlapX && overlapY && overlapZ;
 }
 
-int main() {
+//------------------------------------------------------------------------------------
+// Program main entry point
+//------------------------------------------------------------------------------------
+int main(void) {
+    // Initialization
+    //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 700;
     const int fps = 60;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "De-Bug");
-    SetTargetFPS(fps);
 
+    // Load Level Data
     LevelData level;
     if (!loadLevelFile("src/assets/rooms/level1.txt", level)) {
         cout << "Failed to load level file.\n";
@@ -109,21 +110,38 @@ int main() {
         return 1;
     }
 
+    // Define the camera to look into our 3d world
     Camera3D camera = { 0 };
-    camera.up = { 0.0f, 1.0f, 0.0f };
-    camera.fovy = 60.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f }; // Camera up vector (rotation towards target)
+    camera.fovy = 60.0f; // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
+    Vector3 camOffset = { 0.0f, 10.0f, 18.0f }; // Delta pos from bug
+
+    // Load Models (Computer & Screen)
+    Model computerModel = LoadModel("src/renderer/objects/computer.obj");
+    Model computerScreenModel = LoadModel("src/renderer/objects/computer-screen.obj");
+    float computerRot = 180;
+
+    // Load Bug Model
+    Model bugModel = LoadModel("src/renderer/objects/de-bug.obj");
+    BoundingBox bugBounds = GetMeshBoundingBox(bugModel.meshes[0]);
+    float bugSize[3] = {
+        bugBounds.max.x - bugBounds.min.x,
+        bugBounds.max.y - bugBounds.min.y,
+        bugBounds.max.z - bugBounds.min.z
+    }; // x, y, z
+    PLAYER_RADIUS = bugSize[1] / 2.0f; // Update collision radius to match visual model height
 
     Vector3 bugPos = {
         level.computer.position.x,
         FLOOR_Y + PLAYER_RADIUS,
         level.computer.position.z + 12.0f
-    };
+    }; // Spawn point
+    float bugRot = 0;
 
-    Vector3 camOffset = { 0.0f, 10.0f, 18.0f };
-
-    float moveSpeed = 0.15f * (60.0f / (float)fps);
-    float diagMoveSpeed = sqrt(0.5f) * moveSpeed;
+    // Movement & Physics variables
+    float moveSpeed = 0.15f * (60.0f / (float)fps); // Division is to have same speed at any fps
+    float diagMoveSpeed = sqrt(0.5f) * moveSpeed; // Diagonal normalization
 
     float verticalVelocity = 0.0f;
     const float gravity = 0.015f * (60.0f / (float)fps);
@@ -131,10 +149,15 @@ int main() {
     bool onGround = true;
 
     string collisionText = "Colliding with: none";
-
     ComputerTerminal terminal;
 
-    while (!WindowShouldClose()) {
+    SetTargetFPS(fps); // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
+
+    // Main game loop
+    while (!WindowShouldClose()) { // Detect window close button or ESC key
+        // Update
+        //----------------------------------------------------------------------------------
         vector<BoundingBox> platformBounds = buildPlatformBounds(level);
         vector<BoundingBox> solidBounds = buildSolidBounds(level);
         BoundingBox computerBox = getComputerBounds(level);
@@ -146,41 +169,69 @@ int main() {
         if (terminal.isOpen()) {
             terminal.update();
         } else {
+            bool keyW = IsKeyDown(KEY_W);
+            bool keyA = IsKeyDown(KEY_A);
+            bool keyS = IsKeyDown(KEY_S);
+            bool keyD = IsKeyDown(KEY_D);
+
             float currMoveSpeed = moveSpeed
                 - (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed * 0.5f)
                 + (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed);
 
-            if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_S)) &&
-                (IsKeyDown(KEY_A) || IsKeyDown(KEY_D))) {
+            // Check if moving diagonal
+            if ((keyW || keyS) && (keyA || keyD)) {
                 currMoveSpeed = diagMoveSpeed
                     - (IsKeyDown(KEY_LEFT_SHIFT) * moveSpeed * 0.5f)
                     + (IsKeyDown(KEY_LEFT_CONTROL) * moveSpeed);
             }
 
+            // Jumping Logic
             if (onGround && IsKeyPressed(KEY_SPACE)) {
                 verticalVelocity = jumpStrength;
                 onGround = false;
             }
 
-            // Z movement
+            // Z movement Logic
             Vector3 zTestPos = bugPos;
-            if (IsKeyDown(KEY_W)) zTestPos.z -= currMoveSpeed;
-            if (IsKeyDown(KEY_S)) zTestPos.z += currMoveSpeed;
+            if (keyW) zTestPos.z -= currMoveSpeed;
+            if (keyS) zTestPos.z += currMoveSpeed;
 
             if (!collidesWithSolidSideways(zTestPos, solidBounds)) {
                 bugPos.z = zTestPos.z;
             }
 
-            // X movement
+            // X movement Logic
             Vector3 xTestPos = bugPos;
-            if (IsKeyDown(KEY_A)) xTestPos.x -= currMoveSpeed;
-            if (IsKeyDown(KEY_D)) xTestPos.x += currMoveSpeed;
+            if (keyA) xTestPos.x -= currMoveSpeed;
+            if (keyD) xTestPos.x += currMoveSpeed;
 
             if (!collidesWithSolidSideways(xTestPos, solidBounds)) {
                 bugPos.x = xTestPos.x;
             }
 
-            // Vertical movement
+            // Rotation Logic
+            // We check two-key combinations first to ensure "ONLY" those are active
+            if (keyW && keyA) {
+                bugRot = 45;
+            } else if (keyW && keyD) {
+                bugRot = 315;
+            } else if (keyS && keyA) {
+                bugRot = 135;
+            } else if (keyS && keyD) {
+                bugRot = 225;
+            }
+            // If no two-key combo is happening, check for single keys
+            else if (keyW) {
+                bugRot = 0;
+            } else if (keyA) {
+                bugRot = 90;
+            } else if (keyS) {
+                bugRot = 180;
+            } else if (keyD) {
+                bugRot = 270;
+            }
+
+            // Vertical movement Logic
             verticalVelocity -= gravity;
             float proposedY = bugPos.y + verticalVelocity;
 
@@ -230,6 +281,7 @@ int main() {
                 onGround = true;
             }
 
+            // Bound the bug
             boundPos(bugPos, -48.0f, 48.0f, FLOOR_Y + PLAYER_RADIUS, 80.0f, -48.0f, 78.0f);
 
             BoundingBox playerBox = makePlayerBox(bugPos);
@@ -238,15 +290,14 @@ int main() {
             bool hitPlatform = false;
 
             // Check if puzzle was just solved — unlock the door
-                Room* room = terminal.getGameState().getRoom("room_01");
-                bool doorUnlocked = room && room->doorUnlocked;
+            Room* room = terminal.getGameState().getRoom("room_01");
+            bool doorUnlocked = room && room->doorUnlocked;
 
-                if (hitDoor && doorUnlocked) {
-                    // ADD LOGIC to move to the next room
-                    DrawText("SUCCESS, door is open.", 10, 110, 20, DARKGREEN);
-                } else if (hitDoor && !doorUnlocked) {
-                    DrawText("Door is locked.", 10, 110, 20, DARKGREEN);
-                }
+            if (hitDoor && doorUnlocked) {
+                DrawText("SUCCESS, door is open.", 10, 110, 20, DARKGREEN);
+            } else if (hitDoor && !doorUnlocked) {
+                DrawText("Door is locked.", 10, 110, 20, DARKGREEN);
+            }
 
             for (const BoundingBox& box : platformBounds) {
                 if (isTouchingBox(playerBox, box)) {
@@ -269,20 +320,24 @@ int main() {
 
             if (hitComputer && IsKeyPressed(KEY_E)) {
                 terminal.open("room_01");
-
             }
         }
 
+        // Camera to follow bug
         Vector3 desiredCamPos = {
             bugPos.x + camOffset.x,
             bugPos.y + camOffset.y,
             bugPos.z + camOffset.z
         };
 
+        // Bound the cam to box limits
         boundPos(desiredCamPos, -45.0f, 45.0f, -40.0f, 45.0f, -30.0f, 78.0f);
         camera.position = desiredCamPos;
         camera.target = { bugPos.x, bugPos.y + 1.0f, bugPos.z };
 
+        // --------------------------
+        // Draw
+        //----------------------------------------------------------------------------------
         BeginDrawing();
 
         if (terminal.isOpen()) {
@@ -293,6 +348,7 @@ int main() {
 
             BeginMode3D(camera);
 
+            // Draw level architecture
             for (const BoxObject& box : level.boxes) {
                 if (isRoomShellBox(box)) {
                     DrawCubeWiresV(box.position, box.size, box.color);
@@ -306,16 +362,19 @@ int main() {
                 DrawPlane(plane.position, plane.size, plane.color);
             }
 
-            DrawCubeV(level.computer.position, COMPUTER_SIZE, BLACK);
-            DrawCubeWiresV(level.computer.position, COMPUTER_SIZE, WHITE);
+            // Draw objects with Default Raylib Shader
+            DrawModelEx(computerModel, level.computer.position, (Vector3){ 0.0f, 1.0f, 0.0f }, computerRot, (Vector3){ 1.0f, 1.0f, 1.0f }, WHITE);
+            DrawModelEx(computerScreenModel, level.computer.position, (Vector3){ 0.0f, 1.0f, 0.0f }, computerRot, (Vector3){ 1.0f, 1.0f, 1.0f }, GREEN);
 
             DrawCubeV(level.door.position, DOOR_SIZE, BLUE);
             DrawCubeWiresV(level.door.position, DOOR_SIZE, BLACK);
 
-            DrawSphere(bugPos, PLAYER_RADIUS, BROWN);
+            // Draw bug model replacing the physics sphere
+            DrawModelEx(bugModel, bugPos, (Vector3){ 0.0f, 1.0f, 0.0f }, bugRot, (Vector3){ 1.0f, 1.0f, 1.0f }, BROWN);
 
             EndMode3D();
 
+            // Draw UI HUD
             DrawFPS(10, 10);
             DrawText(collisionText.c_str(), 10, 35, 20, BLACK);
             DrawText(onGround ? "Grounded" : "Airborne", 10, 60, 20, BLACK);
@@ -328,8 +387,17 @@ int main() {
         }
 
         EndDrawing();
+        //----------------------------------------------------------------------------------
     }
 
-    CloseWindow();
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    UnloadModel(computerModel);
+    UnloadModel(computerScreenModel);
+    UnloadModel(bugModel);
+
+    CloseWindow(); // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+
     return 0;
 }

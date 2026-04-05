@@ -1,4 +1,5 @@
 # De-Bug
+
 epic game
 Windows
 To get rid of old build: Remove-Item -Recurse -Force build
@@ -8,6 +9,10 @@ To run: .\build\<file>.exe
 
 MacOS
 To remove carlos shenans: rm -rf build
-To configure:  cmake -S . -B build
-To build:   cmake --build build
-To run:    ./build/main
+To configure: cmake -S . -B build
+To build: cmake --build build
+To run: ./build/TerminalGame
+
+or
+
+./build-run-mac.sh

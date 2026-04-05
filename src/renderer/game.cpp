@@ -35,7 +35,6 @@ int main(void) {
     const int screenWidth = 800;
     const int screenHeight = 450;
     const int fps = 60;
-    const float pi = 3.1415926535897932384626;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "De-Bug");
