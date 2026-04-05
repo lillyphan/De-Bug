@@ -2,13 +2,15 @@
 #include "raylib.h"
 #include <sstream>
 #include <algorithm>
+#include "core/headers/ComputerTerminal.h"
 
-CommandPrompt::CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>* files, Font font)
+CommandPrompt::CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>* files, Font font, ComputerTerminal& terminal)
     : parser(parser),
       files(files),
       terminalFont(font),
       finished(false),
       exitRequested(false),
+      terminal(terminal),
       requestedOpenFile("")
       
 {
@@ -147,16 +149,21 @@ void CommandPrompt::update()
 {
     int key = GetCharPressed();
     while (key > 0) {
-        if (key >= 32 && key <= 126)
+        if (key >= 32 && key <= 126){
+            terminal.playTypingSound();
             input += (char)key;
+        }
         key = GetCharPressed();
     }
 
-    if (IsKeyPressed(KEY_BACKSPACE) && !input.empty())
+    if (IsKeyPressed(KEY_BACKSPACE) && !input.empty()) {
         input.pop_back();
+        terminal.playTypingSound();
+    }
 
     if (IsKeyPressed(KEY_ENTER) && !input.empty()) {
         processInput(input);
+        terminal.playTypingSound();
         input.clear();
     }
 }

@@ -8,6 +8,8 @@
 #include <vector>
 #include "raylib.h"
 
+class ComputerTerminal;  // forward declare
+
 // -------------------------------------------------------
 // CommandPrompt — the CLI terminal window where users can run commands
 // -------------------------------------------------------
@@ -31,7 +33,7 @@ private:
 
 public:
     //use CommandParser, should have already constructed that with GameState
-    CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>*  files, Font font);
+    CommandPrompt(CommandParser& parser, std::vector<PuzzleFile>*  files, Font font, ComputerTerminal& terminal);
 
     void update()          override;
     void draw()            override;
@@ -42,6 +44,7 @@ public:
     std::string getRequestedOpenFile() const;
     void        clearOpenRequest();
     void        addLine(const std::string& line);
+    ComputerTerminal& terminal;
 };
 
 #endif

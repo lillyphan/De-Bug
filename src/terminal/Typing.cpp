@@ -1,8 +1,8 @@
 #include "Typing.h"
 #include "raylib.h"
 
-Typing::Typing(PuzzleFile* file, Font font)
-    : file(file), finished(false)
+Typing::Typing(PuzzleFile* file, Font font, ComputerTerminal& terminal)
+    : file(file), terminal(terminal), finished(false)
 {
     terminalFont = font;
     int blanks = countBlanks();
@@ -40,12 +40,14 @@ void Typing::update() {
     while (key > 0) {
         if (key >= 32 && key <= 126 && !userAnswers.empty()) {
             userAnswers[activeBlank] += (char)key;
+            terminal.playTypingSound();
         }
         key = GetCharPressed();
     }
 
     if (IsKeyPressed(KEY_BACKSPACE) && !userAnswers.empty() && !userAnswers[activeBlank].empty()) {
         userAnswers[activeBlank].pop_back();
+        terminal.playTypingSound();
     }
 
     Rectangle saveButton = { 820, 620, 120, 40 };

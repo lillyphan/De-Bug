@@ -6,6 +6,7 @@
 #include <string>
 #include "raylib.h"
 #include <vector>
+#include "core/headers/ComputerTerminal.h"
 
 class Dropdwn : public Terminal {
 private:
@@ -24,7 +25,8 @@ private:
     bool isMouseInside(int x, int y, int w, int h) const;
 
 public:
-    explicit Dropdwn(PuzzleFile* file, Font font);
+    explicit Dropdwn(PuzzleFile* file, Font font, ComputerTerminal& terminal);
+    ComputerTerminal& terminal;
 
     void update() override;
     void draw() override;

@@ -4,8 +4,8 @@
 #define RAYGUI_IMPLEMENTATION
 #include "../../raygui/raygui.h"
 
-Dropdwn::Dropdwn(PuzzleFile* file, Font font)
-    : file(file), finished(false)
+Dropdwn::Dropdwn(PuzzleFile* file, Font font, ComputerTerminal& terminal)
+    : file(file), terminal(terminal), finished(false)
 {
     terminalFont = font;
     int blanks = countBlanks();

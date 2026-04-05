@@ -22,9 +22,12 @@ public:
     GameState& getGameState() { return gameState; }
 
     Font terminalFont;
+    Sound typingSounds[4];
+    Music computerSound;
 
     void update();
     void draw();
+    void playTypingSound();
 
 private:
     void rebuildPuzzleFiles();
@@ -35,6 +38,7 @@ private:
     std::unique_ptr<CommandParser> parser;
     std::unique_ptr<CommandPrompt> commandPrompt;
     std::unique_ptr<Terminal> activeEditor;
+    
 
     bool openFlag;
 };
