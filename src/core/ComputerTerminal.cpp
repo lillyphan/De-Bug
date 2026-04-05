@@ -8,7 +8,8 @@
 #include "raylib.h"
 
 ComputerTerminal::ComputerTerminal()
-    : openFlag(false) {
+    : openFlag(false),
+    terminalFont(LoadFont("src/assets/fonts/terminal.ttf")) {
     PuzzleLoader::loadAll(gameState, "src/assets/rooms", "src/assets/commands.txt");
 }
 
@@ -35,7 +36,7 @@ void ComputerTerminal::open(const std::string& roomId) {
     rebuildPuzzleFiles();
 
     parser = std::make_unique<CommandParser>(gameState);
-    commandPrompt = std::make_unique<CommandPrompt>(*parser, &puzzleFiles);
+    commandPrompt = std::make_unique<CommandPrompt>(*parser, &puzzleFiles, terminalFont);
     activeEditor.reset();
 
     openFlag = true;
@@ -88,9 +89,9 @@ void ComputerTerminal::update() {
         for (auto& pf : puzzleFiles) {
             if (pf.name == fname) {
                 if (pf.type == FileType::Dropdwn) {
-                    activeEditor = std::make_unique<Dropdwn>(&pf);
+                    activeEditor = std::make_unique<Dropdwn>(&pf, terminalFont);
                 } else {
-                    activeEditor = std::make_unique<Typing>(&pf);
+                    activeEditor = std::make_unique<Typing>(&pf, terminalFont);
                 }
                 break;
             }

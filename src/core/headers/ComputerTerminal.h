@@ -19,6 +19,8 @@ public:
     void close();
     bool isOpen() const;
 
+    Font terminalFont;
+
     void update();
     void draw();
 
