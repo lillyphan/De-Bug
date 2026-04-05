@@ -1,11 +1,51 @@
-LEVEL 3
--38.0 -48.0 22.0
--16.0 -32.25 -15.0
-31.0 -28.0 11.0
-Box 0 0 0 100 100 100 black
-Box 0 0 0 200 200 200 red
-Plane 0 -50 0 100 100 gray
-Plane 0 -50 75 100 50 gray
-Box -30.0 -42.0 -24.0 18.0 2.0 10.0 darkgray
-Box -10.0 -34.0 -12.0 18.0 2.0 10.0 darkgray
-Box 27.0 -34.0 18.0 16.0 2.0 16.0 darkgray
+Winter Brrr
+-34.0 -40.0 -18.0
+-16.0 -33.0 -15.0
+33.0 -28.0 12.0
+
+ComputerSize 4.0 4.0 4.0
+DoorSize 4.0 8.0 1.5
+
+Plane 0.0 -50.0 0.0 100.0 100.0 lightgray
+Plane 0.0 -50.0 75.0 100.0 50.0 lightgray
+
+Box -30.0 -42.0 -24.0 18.0 2.0 10.0 gray
+Box -10.0 -34.0 -12.0 18.0 2.0 10.0 gray
+Box 27.0 -34.0 18.0 16.0 2.0 16.0 gray
+
+Box -30.0 -40.95 -24.0 15.84 0.25 8.8 white
+Box -10.0 -32.95 -12.0 15.84 0.25 8.8 white
+Box 27.0 -32.95 18.0 14.08 0.25 14.08 white
+
+Box 9.0 -31.5 1.5 38.0 1.0 7.0 skyblue
+Box 10.5 -29.8 -1.8 38.0 1.6 0.8 lightgray
+Box 7.5 -29.8 4.8 38.0 1.6 0.8 lightgray
+Box 9.0 -30.9 1.5 35.5 0.2 5.7 white
+
+Box -20.0 -49.8 -12.0 22.0 0.15 16.0 skyblue
+Box 12.0 -49.8 10.0 26.0 0.15 18.0 lightgray
+Box 0.0 -49.8 28.0 18.0 0.15 12.0 lightgray
+
+Sphere -42.0 -47.0 -36.0 6.0 white
+Sphere -34.0 -47.5 28.0 4.8 white
+Sphere 36.0 -47.0 30.0 6.5 white
+Sphere 42.0 -47.0 -18.0 5.5 white
+Sphere -6.0 -47.8 38.0 4.2 white
+
+Sphere -8.0 -25.0 -6.0 1.3 lightgray
+Sphere 12.0 -21.0 8.0 1.0 lightgray
+Sphere 24.0 -17.0 20.0 0.9 lightgray
+Sphere -28.0 -18.0 12.0 1.1 lightgray
+
+Sphere -36.0 -46.5 -12.0 1.6 white
+Sphere -34.0 -46.3 -10.4 1.1 white
+Sphere 20.0 -46.8 26.0 1.4 white
+Sphere 21.4 -46.4 24.8 0.9 white
+
+Cloud -30.0 -2.0 -34.0
+Cloud 0.0 2.0 -26.0
+Cloud 28.0 -1.0 -38.0
+
+Lantern -19.0 -42.0 -27.0
+Lantern 2.0 -42.0 21.0
+Lantern 27.0 -34.0 31.0
