@@ -50,23 +50,31 @@ bool loadLevelFile(const std::string& filename, LevelData& level) {
         return false;
     }
 
+    level = LevelData{}; // clear previous level data
+
     std::string line;
 
-      // Line 1: level name
+    // Line 1: level name
     if (!std::getline(file, line)) {
         std::cerr << "Missing level name line.\n";
         return false;
     }
     level.name = line;
 
-    // Line 1: computer position
+    // Line 2: player start position
+    if (!std::getline(file, line) || !parseVector3Line(line, level.playerStart)) {
+        std::cerr << "Invalid player start position line.\n";
+        return false;
+    }
+
+    // Line 3: computer position
     if (!std::getline(file, line) || !parseVector3Line(line, level.computer.position)) {
         std::cerr << "Invalid computer position line.\n";
         return false;
     }
     level.computer.id = "computer";
 
-    // Line 2: door position
+    // Line 4: door position
     if (!std::getline(file, line) || !parseVector3Line(line, level.door.position)) {
         std::cerr << "Invalid door position line.\n";
         return false;

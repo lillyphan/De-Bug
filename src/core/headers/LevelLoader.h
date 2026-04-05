@@ -23,12 +23,14 @@ struct InteractableObject {
 };
 
 struct LevelData {
+    std::string name;
+    Vector3 playerStart;
+
     InteractableObject computer;
     InteractableObject door;
 
     std::vector<BoxObject> boxes;
     std::vector<PlaneObject> planes;
-    std::string name;
 };
 
 // Fixed dimensions for special objects
